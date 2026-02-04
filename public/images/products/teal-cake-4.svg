@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" fill="#FFF5F0"/>
+  <!-- Plate -->
+  <ellipse cx="200" cy="330" rx="140" ry="20" fill="#E8E8E8"/>
+  <ellipse cx="200" cy="328" rx="130" ry="16" fill="#F5F5F5"/>
+  <!-- Bottom tier -->
+  <rect x="100" y="250" width="200" height="80" rx="8" fill="#5EEAD4"/>
+  <rect x="100" y="250" width="200" height="80" rx="8" fill="#2DD4BF" opacity="0.3"/>
+  <rect x="100" y="250" width="200" height="20" rx="8" fill="#5EEAD4"/>
+  <!-- Top tier -->
+  <rect x="130" y="180" width="140" height="75" rx="8" fill="#5EEAD4"/>
+  <rect x="130" y="180" width="140" height="75" rx="8" fill="#2DD4BF" opacity="0.2"/>
+  <rect x="130" y="180" width="140" height="18" rx="8" fill="#5EEAD4"/>
+  <!-- Frosting drips on bottom tier -->
+  <path d="M100,270 Q100,250 120,250 L280,250 Q300,250 300,270" fill="white" opacity="0.8"/>
+  <ellipse cx="120" cy="270" rx="8" ry="12" fill="white" opacity="0.8"/>
+  <ellipse cx="160" cy="275" rx="7" ry="16" fill="white" opacity="0.8"/>
+  <ellipse cx="210" cy="272" rx="9" ry="14" fill="white" opacity="0.8"/>
+  <ellipse cx="260" cy="278" rx="7" ry="18" fill="white" opacity="0.8"/>
+  <ellipse cx="290" cy="268" rx="6" ry="10" fill="white" opacity="0.8"/>
+  <!-- Frosting drips on top tier -->
+  <path d="M130,198 Q130,180 148,180 L252,180 Q270,180 270,198" fill="white" opacity="0.8"/>
+  <ellipse cx="148" cy="200" rx="6" ry="10" fill="white" opacity="0.8"/>
+  <ellipse cx="180" cy="205" rx="7" ry="14" fill="white" opacity="0.8"/>
+  <ellipse cx="220" cy="202" rx="6" ry="12" fill="white" opacity="0.8"/>
+  <ellipse cx="255" cy="198" rx="5" ry="8" fill="white" opacity="0.8"/>
+  <!-- Cherry on top -->
+  <line x1="200" y1="180" x2="200" y2="155" stroke="#4A7C59" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="200" cy="150" r="14" fill="#DC2626"/>
+  <circle cx="195" cy="145" r="4" fill="white" opacity="0.5"/>
+</svg>

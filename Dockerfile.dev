@@ -1,0 +1,62 @@
+# syntax=docker/dockerfile:1
+
+# Development Dockerfile with hot reload support
+
+FROM php:8.2-cli
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    default-mysql-client \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Set PHP upload limits
+RUN echo "upload_max_filesize = 200M" > /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 200M" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy composer files first for better caching
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --prefer-dist --no-scripts
+
+# Copy package files for npm
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy the rest of the application
+COPY . .
+
+# Run composer scripts
+RUN composer dump-autoload
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Expose ports for Laravel and Vite
+EXPOSE 8000 5173
+
+# Start both Laravel and Vite dev servers
+CMD php artisan serve --host=0.0.0.0 --port=8000 & npm run dev -- --host 0.0.0.0 && wait

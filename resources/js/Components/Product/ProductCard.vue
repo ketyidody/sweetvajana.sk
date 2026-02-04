@@ -1,7 +1,7 @@
 <template>
   <div
-    class="group cursor-pointer bg-card rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300"
-    @click="$emit('click')"
+    class="group bg-card rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300 cursor-pointer"
+    @click="router.visit('/products/' + product.slug)"
   >
     <div class="aspect-square overflow-hidden bg-muted">
       <img
@@ -18,24 +18,38 @@
       <p class="text-muted-foreground line-clamp-2 text-sm">
         {{ product.description }}
       </p>
-      <div class="mt-3">
+      <div class="mt-3 flex items-center justify-between">
         <span class="inline-block px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs">
           {{ product.category }}
         </span>
+        <button
+          v-if="product.stock > 0"
+          class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-medium hover:bg-primary/90 transition-colors"
+          @click.stop="addToCart"
+        >
+          <ShoppingCartIcon class="w-3.5 h-3.5" />
+          Add to Cart
+        </button>
+        <span v-else class="text-xs text-muted-foreground">Out of stock</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { router } from '@inertiajs/vue3'
+import { ShoppingCart as ShoppingCartIcon } from 'lucide-vue-next'
+
+const props = defineProps({
   product: {
     type: Object,
     required: true
   }
 })
 
-defineEmits(['click'])
+function addToCart() {
+  router.post('/cart', { product_id: props.product.id, quantity: 1 }, { preserveScroll: true })
+}
 </script>
 
 <style scoped>

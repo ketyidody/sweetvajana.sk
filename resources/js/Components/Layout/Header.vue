@@ -12,9 +12,9 @@
           <a href="#home" class="text-foreground hover:text-foreground/70 transition-colors">
             Home
           </a>
-          <a href="#products" class="text-foreground hover:text-foreground/70 transition-colors">
+          <Link href="/products" class="text-foreground hover:text-foreground/70 transition-colors">
             Products
-          </a>
+          </Link>
           <a href="#about" class="text-foreground hover:text-foreground/70 transition-colors">
             About
           </a>
@@ -60,13 +60,13 @@
         >
           Home
         </a>
-        <a
-          href="#products"
+        <Link
+          href="/products"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
           Products
-        </a>
+        </Link>
         <a
           href="#about"
           class="block text-foreground hover:text-foreground/70 transition-colors"
@@ -88,6 +88,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import { ShoppingCart as ShoppingCartIcon, Menu as MenuIcon, X as XIcon } from 'lucide-vue-next'
 import Button from '@/Components/UI/Button.vue'
 

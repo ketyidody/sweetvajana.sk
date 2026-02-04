@@ -1,10 +1,16 @@
 <template>
+  <Head title="Home" />
   <div class="min-h-screen flex flex-col bg-background">
-    <Header :cart-items-count="cartItemsCount" @cart-click="handleCartClick" />
+    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit('/cart')" />
 
     <main class="flex-1">
       <Hero />
-      <ProductGrid :products="products" @product-click="handleProductClick" />
+      <ProductGrid
+        v-if="featuredProducts.length"
+        :products="featuredProducts"
+        title="Featured"
+        subtitle="Our most popular handcrafted treats"
+      />
     </main>
 
     <Footer />
@@ -12,33 +18,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import Header from '@/Components/Layout/Header.vue'
 import Hero from '@/Components/Layout/Hero.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import ProductGrid from '@/Components/Product/ProductGrid.vue'
 
-const props = defineProps({
-  products: {
+defineProps({
+  featuredProducts: {
     type: Array,
     default: () => []
-  }
+  },
 })
 
-// Cart state (simplified for now - will be enhanced later)
-const cart = ref([])
-
-const cartItemsCount = computed(() => {
-  return cart.value.reduce((total, item) => total + item.quantity, 0)
-})
-
-const handleCartClick = () => {
-  console.log('Cart clicked')
-  // TODO: Implement cart drawer
-}
-
-const handleProductClick = (product) => {
-  console.log('Product clicked:', product)
-  // TODO: Implement product modal
-}
+const cartItemsCount = computed(() => usePage().props.cartItemsCount)
 </script>

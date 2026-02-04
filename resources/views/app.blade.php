@@ -6,7 +6,8 @@
 
         <title inertia>{{ config('app.name', 'SweetVajana') }}</title>
 
-        @vite(['resources/css/app.css', 'resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+        @routes
+        @vite(['resources/js/app.js'])
         @inertiaHead
     </head>
     <body class="antialiased">

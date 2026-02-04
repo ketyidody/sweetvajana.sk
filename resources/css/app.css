@@ -117,9 +117,6 @@
   }
 }
 
-/**
- * Base typography
- */
 @layer base {
   :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
     h1 {
