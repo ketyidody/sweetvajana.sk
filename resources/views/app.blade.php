@@ -6,6 +6,13 @@
 
         <title inertia>{{ config('app.name', 'SweetVajana') }}</title>
 
+        @php
+            $favicon = \App\Models\SiteSetting::get('favicon');
+        @endphp
+        @if($favicon)
+            <link rel="icon" href="{{ $favicon }}">
+        @endif
+
         @routes
         @vite(['resources/js/app.js'])
         @inertiaHead

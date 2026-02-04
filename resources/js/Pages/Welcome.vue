@@ -1,9 +1,9 @@
 <template>
-  <Head title="Home" />
+  <Head :title="siteSettings.site_name || 'Home'" />
   <div class="min-h-screen flex flex-col bg-background">
     <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit('/cart')" />
 
-    <main class="flex-1">
+    <main class="flex-1 bg-pink-500/10">
       <Hero />
       <ProductGrid
         v-if="featuredProducts.length"
@@ -33,4 +33,5 @@ defineProps({
 })
 
 const cartItemsCount = computed(() => usePage().props.cartItemsCount)
+const siteSettings = computed(() => usePage().props.site_settings || {})
 </script>

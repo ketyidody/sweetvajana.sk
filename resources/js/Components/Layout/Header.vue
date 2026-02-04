@@ -1,26 +1,27 @@
 <template>
-  <header class="sticky top-0 z-50 bg-white border-b border-border">
+  <header class="sticky top-0 z-50 bg-pink-500/10 border-b border-border">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 md:h-20">
         <!-- Logo -->
-        <div class="flex-shrink-0">
-          <h1 class="text-xl md:text-2xl tracking-tight">Sweet Vajana</h1>
-        </div>
+        <Link href="/" class="flex-shrink-0">
+          <img v-if="settings.logo" :src="settings.logo" :alt="settings.site_name || 'Sweet Vajana'" class="h-12 md:h-15 w-auto object-contain" />
+          <span v-else class="text-xl md:text-2xl tracking-tight">{{ settings.site_name || 'Sweet Vajana' }}</span>
+        </Link>
 
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center space-x-8">
-          <a href="#home" class="text-foreground hover:text-foreground/70 transition-colors">
+          <Link href="/" class="text-foreground hover:text-foreground/70 transition-colors">
             Home
-          </a>
+          </Link>
           <Link href="/products" class="text-foreground hover:text-foreground/70 transition-colors">
             Products
           </Link>
-          <a href="#about" class="text-foreground hover:text-foreground/70 transition-colors">
+          <Link href="/about" class="text-foreground hover:text-foreground/70 transition-colors">
             About
-          </a>
-          <a href="#contact" class="text-foreground hover:text-foreground/70 transition-colors">
+          </Link>
+          <Link href="/contact" class="text-foreground hover:text-foreground/70 transition-colors">
             Contact
-          </a>
+          </Link>
         </nav>
 
         <!-- Cart Button -->
@@ -53,13 +54,13 @@
 
       <!-- Mobile Navigation -->
       <nav v-if="isMobileMenuOpen" class="md:hidden py-4 space-y-4 border-t border-border">
-        <a
-          href="#home"
+        <Link
+          href="/"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
           Home
-        </a>
+        </Link>
         <Link
           href="/products"
           class="block text-foreground hover:text-foreground/70 transition-colors"
@@ -67,28 +68,28 @@
         >
           Products
         </Link>
-        <a
-          href="#about"
+        <Link
+          href="/about"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
           About
-        </a>
-        <a
-          href="#contact"
+        </Link>
+        <Link
+          href="/contact"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
           Contact
-        </a>
+        </Link>
       </nav>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
+import { Link, usePage } from '@inertiajs/vue3'
 import { ShoppingCart as ShoppingCartIcon, Menu as MenuIcon, X as XIcon } from 'lucide-vue-next'
 import Button from '@/Components/UI/Button.vue'
 
@@ -101,5 +102,6 @@ defineProps({
 
 defineEmits(['cart-click'])
 
+const settings = computed(() => usePage().props.site_settings || {})
 const isMobileMenuOpen = ref(false)
 </script>

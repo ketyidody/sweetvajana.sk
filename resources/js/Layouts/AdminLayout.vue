@@ -101,6 +101,7 @@ import {
   ShoppingCart as OrdersIcon,
   FileText as PagesIcon,
   Settings as SettingsIcon,
+  MessageSquare as MessagesIcon,
   Users as UsersIcon,
   ArrowLeft as ArrowLeftIcon,
   LogOut as LogOutIcon,
@@ -117,6 +118,7 @@ const navItems = [
   { href: '/admin/products', label: 'Products', icon: ProductsIcon },
   { href: '/admin/orders', label: 'Orders', icon: OrdersIcon },
   { href: '/admin/pages', label: 'Pages', icon: PagesIcon },
+  { href: '/admin/contact-messages', label: 'Messages', icon: MessagesIcon },
   { href: '/admin/settings', label: 'Settings', icon: SettingsIcon },
   { href: '/admin/users', label: 'Users', icon: UsersIcon },
 ]
