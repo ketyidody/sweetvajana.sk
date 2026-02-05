@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Models\Language;
 use App\Models\ModelTranslation;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -15,7 +16,7 @@ trait HasTranslations
     public function translated(string $field, ?string $locale = null): ?string
     {
         $locale = $locale ?? app()->getLocale();
-        $defaultLocale = config('app.fallback_locale', 'sk');
+        $defaultLocale = Language::getDefault()?->code ?? config('app.fallback_locale', 'sk');
 
         if ($locale === $defaultLocale) {
             return $this->{$field};
