@@ -4,106 +4,226 @@
     <h1 class="text-2xl font-medium mb-6">Site Settings</h1>
 
     <form @submit.prevent="submit" class="space-y-8 max-w-2xl">
-      <!-- General -->
-      <section>
-        <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">General</h2>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium mb-1">Site Name</label>
-            <input v-model="form.site_name" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Favicon</label>
-            <input type="file" accept="image/png,image/x-icon,image/svg+xml,image/jpeg" @change="onFaviconChange" class="w-full text-sm" />
-            <p class="text-xs text-muted-foreground mt-1">Recommended: PNG or ICO, max 2MB.</p>
-            <img v-if="faviconPreview" :src="faviconPreview" class="mt-2 w-10 h-10 rounded object-contain" />
-            <img v-else-if="settings.favicon" :src="settings.favicon" class="mt-2 w-10 h-10 rounded object-contain" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Logo</label>
-            <input type="file" accept="image/*" @change="onLogoChange" class="w-full text-sm" />
-            <p class="text-xs text-muted-foreground mt-1">Replaces the "Sweet Vajana" text in the header. Max 5MB.</p>
-            <img v-if="logoPreview" :src="logoPreview" class="mt-2 h-10 rounded object-contain" />
-            <img v-else-if="settings.logo" :src="settings.logo" class="mt-2 h-10 rounded object-contain" />
-          </div>
-        </div>
-      </section>
+      <!-- Language Tabs -->
+      <div v-if="nonDefaultLanguages.length > 0" class="flex gap-1 border-b border-border">
+        <button
+          type="button"
+          @click="activeLocale = defaultLanguage.code"
+          class="px-4 py-2 text-sm border-b-2 transition-colors"
+          :class="activeLocale === defaultLanguage.code
+            ? 'border-primary text-primary font-medium'
+            : 'border-transparent text-muted-foreground hover:text-foreground'"
+        >
+          {{ defaultLanguage.native_name }} ({{ t('common.default') || 'Default' }})
+        </button>
+        <button
+          v-for="lang in nonDefaultLanguages"
+          :key="lang.code"
+          type="button"
+          @click="activeLocale = lang.code"
+          class="px-4 py-2 text-sm border-b-2 transition-colors"
+          :class="activeLocale === lang.code
+            ? 'border-primary text-primary font-medium'
+            : 'border-transparent text-muted-foreground hover:text-foreground'"
+        >
+          {{ lang.native_name }}
+        </button>
+      </div>
 
-      <!-- Hero -->
-      <section>
-        <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">Hero Section</h2>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium mb-1">Title</label>
-            <input v-model="form.hero_title" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+      <!-- Default locale fields -->
+      <template v-if="activeLocale === defaultLanguage.code">
+        <!-- General -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">General</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Site Name</label>
+              <input v-model="form.site_name" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Favicon</label>
+              <input type="file" accept="image/png,image/x-icon,image/svg+xml,image/jpeg" @change="onFaviconChange" class="w-full text-sm" />
+              <p class="text-xs text-muted-foreground mt-1">Recommended: PNG or ICO, max 2MB.</p>
+              <img v-if="faviconPreview" :src="faviconPreview" class="mt-2 w-10 h-10 rounded object-contain" />
+              <img v-else-if="settings.favicon" :src="settings.favicon" class="mt-2 w-10 h-10 rounded object-contain" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Logo</label>
+              <input type="file" accept="image/*" @change="onLogoChange" class="w-full text-sm" />
+              <p class="text-xs text-muted-foreground mt-1">Replaces the "Sweet Vajana" text in the header. Max 5MB.</p>
+              <img v-if="logoPreview" :src="logoPreview" class="mt-2 h-10 rounded object-contain" />
+              <img v-else-if="settings.logo" :src="settings.logo" class="mt-2 h-10 rounded object-contain" />
+            </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Subtitle</label>
-            <textarea v-model="form.hero_subtitle" rows="2" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Hero Image</label>
-            <input type="file" accept="image/*" @change="onHeroImageChange" class="w-full text-sm" />
-            <p class="text-xs text-muted-foreground mt-1">Max 20MB.</p>
-            <img v-if="heroImagePreview" :src="heroImagePreview" class="mt-2 w-40 h-24 rounded object-cover" />
-            <img v-else-if="settings.hero_image" :src="settings.hero_image" class="mt-2 w-40 h-24 rounded object-cover" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">CTA Button Text</label>
-            <input v-model="form.hero_cta_text" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Contact & Social -->
-      <section>
-        <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">Contact & Social</h2>
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
+        <!-- Hero -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">Hero Section</h2>
+          <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium mb-1">Phone</label>
-              <input v-model="form.phone" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              <label class="block text-sm font-medium mb-1">Title</label>
+              <input v-model="form.hero_title" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium mb-1">Email</label>
-              <input v-model="form.email" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Instagram URL</label>
-              <input v-model="form.instagram_url" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              <label class="block text-sm font-medium mb-1">Subtitle</label>
+              <textarea v-model="form.hero_subtitle" rows="2" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium mb-1">Facebook URL</label>
-              <input v-model="form.facebook_url" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              <label class="block text-sm font-medium mb-1">Hero Image</label>
+              <input type="file" accept="image/*" @change="onHeroImageChange" class="w-full text-sm" />
+              <p class="text-xs text-muted-foreground mt-1">Max 20MB.</p>
+              <img v-if="heroImagePreview" :src="heroImagePreview" class="mt-2 w-40 h-24 rounded object-cover" />
+              <img v-else-if="settings.hero_image" :src="settings.hero_image" class="mt-2 w-40 h-24 rounded object-cover" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">CTA Button Text</label>
+              <input v-model="form.hero_cta_text" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
             </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">About Text</label>
-            <textarea v-model="form.about_text" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Contact Text</label>
-            <textarea v-model="form.contact_text" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- SEO -->
-      <section>
-        <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">SEO & Footer</h2>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium mb-1">Meta Description</label>
-            <textarea v-model="form.meta_description" rows="2" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+        <!-- Contact & Social -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">Contact & Social</h2>
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Phone</label>
+                <input v-model="form.phone" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Email</label>
+                <input v-model="form.email" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Instagram URL</label>
+                <input v-model="form.instagram_url" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Facebook URL</label>
+                <input v-model="form.facebook_url" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">About Text</label>
+              <textarea v-model="form.about_text" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Contact Text</label>
+              <textarea v-model="form.contact_text" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Footer Text</label>
-            <input v-model="form.footer_text" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+        </section>
+
+        <!-- SEO -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">SEO & Footer</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Meta Description</label>
+              <textarea v-model="form.meta_description" rows="2" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Footer Text</label>
+              <input v-model="form.footer_text" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </template>
+
+      <!-- Translation locale fields -->
+      <template v-else>
+        <p class="text-sm text-muted-foreground">
+          Translate text fields for <strong>{{ activeLanguageName }}</strong>. Leave empty to use the default language value.
+        </p>
+
+        <!-- Translatable: General -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">General</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                Site Name
+                <span class="text-xs text-muted-foreground ml-1">({{ settings.site_name }})</span>
+              </label>
+              <input v-model="form.translations[activeLocale].site_name" type="text" :placeholder="settings.site_name" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Translatable: Hero -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">Hero Section</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                Title
+                <span class="text-xs text-muted-foreground ml-1">({{ settings.hero_title }})</span>
+              </label>
+              <input v-model="form.translations[activeLocale].hero_title" type="text" :placeholder="settings.hero_title" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                Subtitle
+                <span class="text-xs text-muted-foreground ml-1">({{ truncate(settings.hero_subtitle) }})</span>
+              </label>
+              <textarea v-model="form.translations[activeLocale].hero_subtitle" rows="2" :placeholder="settings.hero_subtitle" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                CTA Button Text
+                <span class="text-xs text-muted-foreground ml-1">({{ settings.hero_cta_text }})</span>
+              </label>
+              <input v-model="form.translations[activeLocale].hero_cta_text" type="text" :placeholder="settings.hero_cta_text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Translatable: About & Contact text -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">Content</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                About Text
+                <span class="text-xs text-muted-foreground ml-1">({{ truncate(settings.about_text) }})</span>
+              </label>
+              <textarea v-model="form.translations[activeLocale].about_text" rows="3" :placeholder="settings.about_text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                Contact Text
+                <span class="text-xs text-muted-foreground ml-1">({{ truncate(settings.contact_text) }})</span>
+              </label>
+              <textarea v-model="form.translations[activeLocale].contact_text" rows="3" :placeholder="settings.contact_text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Translatable: SEO & Footer -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">SEO & Footer</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                Meta Description
+                <span class="text-xs text-muted-foreground ml-1">({{ truncate(settings.meta_description) }})</span>
+              </label>
+              <textarea v-model="form.translations[activeLocale].meta_description" rows="2" :placeholder="settings.meta_description" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">
+                Footer Text
+                <span class="text-xs text-muted-foreground ml-1">({{ settings.footer_text }})</span>
+              </label>
+              <input v-model="form.translations[activeLocale].footer_text" type="text" :placeholder="settings.footer_text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+          </div>
+        </section>
+      </template>
 
       <div class="pt-4">
         <button
@@ -119,15 +239,40 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import { useTranslation } from '@/composables/useTranslation'
 
-const props = defineProps({ settings: Object })
+const { t } = useTranslation()
+
+const props = defineProps({
+  settings: Object,
+  settingTranslations: Object,
+  translatableKeys: Array,
+  languages: Array,
+})
+
+const defaultLanguage = computed(() => props.languages.find(l => l.is_default) || props.languages[0])
+const nonDefaultLanguages = computed(() => props.languages.filter(l => !l.is_default))
+const activeLocale = ref(defaultLanguage.value.code)
+const activeLanguageName = computed(() => props.languages.find(l => l.code === activeLocale.value)?.native_name || activeLocale.value)
 
 const heroImagePreview = ref(null)
 const faviconPreview = ref(null)
 const logoPreview = ref(null)
+
+// Build translations object for each non-default language
+function buildTranslationsData() {
+  const data = {}
+  for (const lang of nonDefaultLanguages.value) {
+    data[lang.code] = {}
+    for (const key of props.translatableKeys) {
+      data[lang.code][key] = props.settingTranslations?.[lang.code]?.[key] ?? ''
+    }
+  }
+  return data
+}
 
 const form = useForm({
   site_name: props.settings.site_name ?? '',
@@ -145,7 +290,13 @@ const form = useForm({
   footer_text: props.settings.footer_text ?? '',
   favicon: null,
   logo: null,
+  translations: buildTranslationsData(),
 })
+
+function truncate(text, length = 50) {
+  if (!text) return ''
+  return text.length > length ? text.substring(0, length) + '...' : text
+}
 
 function onHeroImageChange(e) {
   const file = e.target.files[0]

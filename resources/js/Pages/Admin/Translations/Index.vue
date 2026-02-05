@@ -59,7 +59,7 @@
               <td class="px-4 py-2 font-mono text-xs whitespace-nowrap">{{ key }}</td>
               <td v-for="lang in languages" :key="lang.code" class="px-4 py-2">
                 <input
-                  :value="locales[lang.code] || ''"
+                  :value="getFieldValue(group, key, lang.code, locales)"
                   @input="trackChange(group, key, lang.code, $event.target.value)"
                   class="w-full px-2 py-1 text-sm border border-border rounded bg-background"
                 />
@@ -163,9 +163,17 @@ const newKey = reactive({
   values: {},
 })
 
+function getFieldValue(group, key, locale, locales) {
+  const changeKey = `${group}.${key}.${locale}`
+  if (changeKey in changes.value) {
+    return changes.value[changeKey].value
+  }
+  return locales[locale] || ''
+}
+
 function trackChange(group, key, locale, value) {
   const changeKey = `${group}.${key}.${locale}`
-  changes.value[changeKey] = { group, key, locale, value }
+  changes.value = { ...changes.value, [changeKey]: { group, key, locale, value } }
 }
 
 function applyFilters() {

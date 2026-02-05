@@ -5,123 +5,156 @@
       <h1 class="text-2xl font-medium mb-6">{{ product ? 'Edit Product' : 'New Product' }}</h1>
 
       <form @submit.prevent="submit" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">Category</label>
-          <select v-model="form.category_id" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm">
-            <option value="">Select category</option>
-            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-          </select>
-          <p v-if="form.errors.category_id" class="text-destructive text-xs mt-1">{{ form.errors.category_id }}</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1">Name</label>
-          <input v-model="form.name" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-          <p v-if="form.errors.name" class="text-destructive text-xs mt-1">{{ form.errors.name }}</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1">Description</label>
-          <textarea v-model="form.description" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-          <p v-if="form.errors.description" class="text-destructive text-xs mt-1">{{ form.errors.description }}</p>
-        </div>
-
-        <!-- Translations -->
-        <div v-if="nonDefaultLanguages.length" class="border border-border rounded-md p-4 space-y-4">
-          <button type="button" @click="showTranslations = !showTranslations" class="text-sm font-medium flex items-center gap-2">
-            <ChevronDownIcon :class="['w-4 h-4 transition-transform', showTranslations ? 'rotate-0' : '-rotate-90']" />
-            Translations
+        <!-- Language Tabs -->
+        <div v-if="nonDefaultLanguages.length > 0" class="flex gap-1 border-b border-border">
+          <button
+            type="button"
+            @click="activeLocale = defaultLocale"
+            class="px-4 py-2 text-sm border-b-2 transition-colors"
+            :class="activeLocale === defaultLocale
+              ? 'border-primary text-primary font-medium'
+              : 'border-transparent text-muted-foreground hover:text-foreground'"
+          >
+            {{ defaultLanguageName }} (Default)
           </button>
-          <div v-if="showTranslations" class="space-y-4">
-            <div v-for="lang in nonDefaultLanguages" :key="lang.code" class="space-y-2 border-t border-border pt-3">
-              <p class="text-xs font-medium text-muted-foreground uppercase">{{ lang.name }} ({{ lang.code }})</p>
-              <div>
-                <label class="block text-xs text-muted-foreground mb-1">Name</label>
-                <input
-                  v-model="form.translations[lang.code].name"
-                  type="text"
-                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
-                />
-              </div>
-              <div>
-                <label class="block text-xs text-muted-foreground mb-1">Description</label>
-                <textarea
-                  v-model="form.translations[lang.code].description"
-                  rows="2"
-                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
-                />
-              </div>
-            </div>
-          </div>
+          <button
+            v-for="lang in nonDefaultLanguages"
+            :key="lang.code"
+            type="button"
+            @click="activeLocale = lang.code"
+            class="px-4 py-2 text-sm border-b-2 transition-colors"
+            :class="activeLocale === lang.code
+              ? 'border-primary text-primary font-medium'
+              : 'border-transparent text-muted-foreground hover:text-foreground'"
+          >
+            {{ lang.native_name || lang.name }}
+          </button>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <!-- Default locale fields -->
+        <template v-if="activeLocale === defaultLocale">
           <div>
-            <label class="block text-sm font-medium mb-1">Price</label>
-            <input v-model="form.price" type="number" step="0.01" min="0" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-            <p v-if="form.errors.price" class="text-destructive text-xs mt-1">{{ form.errors.price }}</p>
+            <label class="block text-sm font-medium mb-1">Category</label>
+            <select v-model="form.category_id" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm">
+              <option value="">Select category</option>
+              <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+            </select>
+            <p v-if="form.errors.category_id" class="text-destructive text-xs mt-1">{{ form.errors.category_id }}</p>
           </div>
+
           <div>
-            <label class="block text-sm font-medium mb-1">Stock</label>
-            <input v-model="form.stock" type="number" min="0" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-            <p v-if="form.errors.stock" class="text-destructive text-xs mt-1">{{ form.errors.stock }}</p>
+            <label class="block text-sm font-medium mb-1">Name</label>
+            <input v-model="form.name" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            <p v-if="form.errors.name" class="text-destructive text-xs mt-1">{{ form.errors.name }}</p>
           </div>
-        </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-1">Main Image</label>
-          <input type="file" accept="image/*" @change="form.image = $event.target.files[0]" class="w-full text-sm" />
-          <img v-if="product?.image" :src="product.image" class="mt-2 w-20 h-20 rounded object-cover" />
-          <p v-if="form.errors.image" class="text-destructive text-xs mt-1">{{ form.errors.image }}</p>
-        </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Description</label>
+            <textarea v-model="form.description" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            <p v-if="form.errors.description" class="text-destructive text-xs mt-1">{{ form.errors.description }}</p>
+          </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-1">Additional Images</label>
-          <input
-            ref="additionalImagesInput"
-            type="file"
-            accept="image/*"
-            multiple
-            @change="onAdditionalImages"
-            class="w-full text-sm"
-          />
-          <p class="text-xs text-muted-foreground mt-1">You can select multiple images (max 10, 20MB each).</p>
-          <p v-if="form.errors.additional_images" class="text-destructive text-xs mt-1">{{ form.errors.additional_images }}</p>
-
-          <div v-if="existingImages.length || newImagePreviews.length" class="mt-3 flex flex-wrap gap-3">
-            <div v-for="(img, i) in existingImages" :key="'existing-' + i" class="relative group">
-              <img :src="img" class="w-20 h-20 rounded object-cover border border-border" />
-              <button
-                type="button"
-                @click="removeExistingImage(i)"
-                class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <XIcon class="w-3 h-3" />
-              </button>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Price</label>
+              <input v-model="form.price" type="number" step="0.01" min="0" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              <p v-if="form.errors.price" class="text-destructive text-xs mt-1">{{ form.errors.price }}</p>
             </div>
-            <div v-for="(preview, i) in newImagePreviews" :key="'new-' + i" class="relative group">
-              <img :src="preview" class="w-20 h-20 rounded object-cover border border-border" />
-              <button
-                type="button"
-                @click="removeNewImage(i)"
-                class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <XIcon class="w-3 h-3" />
-              </button>
+            <div>
+              <label class="block text-sm font-medium mb-1">Stock</label>
+              <input v-model="form.stock" type="number" min="0" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              <p v-if="form.errors.stock" class="text-destructive text-xs mt-1">{{ form.errors.stock }}</p>
             </div>
           </div>
-        </div>
 
-        <div class="flex items-center gap-6">
-          <div class="flex items-center gap-2">
-            <input v-model="form.is_active" type="checkbox" id="is_active" class="rounded" />
-            <label for="is_active" class="text-sm">Active</label>
+          <div>
+            <label class="block text-sm font-medium mb-1">Main Image</label>
+            <input type="file" accept="image/*" @change="form.image = $event.target.files[0]" class="w-full text-sm" />
+            <img v-if="product?.image" :src="product.image" class="mt-2 w-20 h-20 rounded object-cover" />
+            <p v-if="form.errors.image" class="text-destructive text-xs mt-1">{{ form.errors.image }}</p>
           </div>
-          <div class="flex items-center gap-2">
-            <input v-model="form.is_featured" type="checkbox" id="is_featured" class="rounded" />
-            <label for="is_featured" class="text-sm">Featured</label>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Additional Images</label>
+            <input
+              ref="additionalImagesInput"
+              type="file"
+              accept="image/*"
+              multiple
+              @change="onAdditionalImages"
+              class="w-full text-sm"
+            />
+            <p class="text-xs text-muted-foreground mt-1">You can select multiple images (max 10, 20MB each).</p>
+            <p v-if="form.errors.additional_images" class="text-destructive text-xs mt-1">{{ form.errors.additional_images }}</p>
+
+            <div v-if="existingImages.length || newImagePreviews.length" class="mt-3 flex flex-wrap gap-3">
+              <div v-for="(img, i) in existingImages" :key="'existing-' + i" class="relative group">
+                <img :src="img" class="w-20 h-20 rounded object-cover border border-border" />
+                <button
+                  type="button"
+                  @click="removeExistingImage(i)"
+                  class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <XIcon class="w-3 h-3" />
+                </button>
+              </div>
+              <div v-for="(preview, i) in newImagePreviews" :key="'new-' + i" class="relative group">
+                <img :src="preview" class="w-20 h-20 rounded object-cover border border-border" />
+                <button
+                  type="button"
+                  @click="removeNewImage(i)"
+                  class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <XIcon class="w-3 h-3" />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+              <input v-model="form.is_active" type="checkbox" id="is_active" class="rounded" />
+              <label for="is_active" class="text-sm">Active</label>
+            </div>
+            <div class="flex items-center gap-2">
+              <input v-model="form.is_featured" type="checkbox" id="is_featured" class="rounded" />
+              <label for="is_featured" class="text-sm">Featured</label>
+            </div>
+          </div>
+        </template>
+
+        <!-- Translation locale fields -->
+        <template v-else>
+          <p class="text-sm text-muted-foreground">
+            Translate fields for <strong>{{ activeLanguageName }}</strong>. Leave empty to use the default language value.
+          </p>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">
+              Name
+              <span class="text-xs text-muted-foreground ml-1">({{ form.name }})</span>
+            </label>
+            <input
+              v-model="form.translations[activeLocale].name"
+              type="text"
+              :placeholder="form.name"
+              class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">
+              Description
+              <span class="text-xs text-muted-foreground ml-1">({{ truncate(form.description) }})</span>
+            </label>
+            <textarea
+              v-model="form.translations[activeLocale].description"
+              rows="3"
+              :placeholder="form.description"
+              class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+            />
+          </div>
+        </template>
 
         <div class="flex items-center gap-3 pt-4">
           <button
@@ -143,7 +176,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
-import { X as XIcon, ChevronDown as ChevronDownIcon } from 'lucide-vue-next'
+import { X as XIcon } from 'lucide-vue-next'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
@@ -154,14 +187,26 @@ const props = defineProps({
   defaultLocale: { type: String, default: 'sk' },
 })
 
-const showTranslations = ref(!!props.product)
+const activeLocale = ref(props.defaultLocale)
 const additionalImagesInput = ref(null)
 const existingImages = reactive([...(props.product?.images ?? [])])
 const newImages = ref([])
 const newImagePreviews = ref([])
 
+const defaultLanguageName = computed(() =>
+  props.languages.find(l => l.code === props.defaultLocale)?.native_name
+    || props.languages.find(l => l.code === props.defaultLocale)?.name
+    || props.defaultLocale
+)
+
 const nonDefaultLanguages = computed(() =>
   props.languages.filter(l => l.code !== props.defaultLocale)
+)
+
+const activeLanguageName = computed(() =>
+  props.languages.find(l => l.code === activeLocale.value)?.native_name
+    || props.languages.find(l => l.code === activeLocale.value)?.name
+    || activeLocale.value
 )
 
 const translationsData = {}
@@ -185,6 +230,11 @@ const form = useForm({
   is_featured: props.product?.is_featured ?? false,
   translations: translationsData,
 })
+
+function truncate(text, length = 50) {
+  if (!text) return ''
+  return text.length > length ? text.substring(0, length) + '...' : text
+}
 
 function onAdditionalImages(e) {
   const files = Array.from(e.target.files)

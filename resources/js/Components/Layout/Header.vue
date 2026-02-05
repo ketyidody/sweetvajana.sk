@@ -1,6 +1,7 @@
 <template>
-  <header class="sticky top-0 z-50 bg-pink-500/10 border-b border-border">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <header class="sticky top-0 z-50 bg-background border-b border-border">
+    <div class="absolute inset-0 bg-pink-500/10 pointer-events-none"></div>
+    <div class="relative container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 md:h-20">
         <!-- Logo -->
         <Link :href="localizedUrl('/')" class="flex-shrink-0">

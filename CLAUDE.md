@@ -16,12 +16,20 @@ SweetVajana is an e-commerce platform for a cake and cookie factory. The applica
 - **Database**: SQLite (local default), MySQL (Docker)
 - **Icons**: lucide-vue-next
 
-## Development Commands
+## Development Environment
 
-### Quick Start (Local)
+**IMPORTANT: The application runs inside Docker. ALL artisan, composer, npm, and other project commands MUST be executed via `docker compose exec app <command>`. NEVER run them directly on the host.**
+
+### Running Commands
 ```bash
-composer setup    # Full setup: install deps, generate key, migrate, build
-composer dev      # Start all dev servers concurrently (Laravel, Vite, queue, logs)
+# Prefix all commands with:
+docker compose exec app <command>
+
+# Examples:
+docker compose exec app php artisan migrate
+docker compose exec app composer install
+docker compose exec app npm run build
+docker compose exec app ./vendor/bin/pint
 ```
 
 ### Quick Start (Docker)
@@ -32,42 +40,18 @@ docker compose exec app php artisan migrate  # Run migrations
 docker compose down -v            # Stop and remove volumes
 ```
 
-### Individual Commands
-```bash
-# PHP dependencies
-composer install
-
-# JavaScript dependencies
-npm install
-
-# Development servers (run separately if needed)
-php artisan serve     # Laravel server at http://localhost:8000
-npm run dev           # Vite HMR server
-
-# Build for production
-npm run build
-```
-
 ### Database
 ```bash
-php artisan migrate                  # Run migrations
-php artisan migrate:fresh --seed     # Reset and seed database
-php artisan make:model ModelName -m  # Create model with migration
+docker compose exec app php artisan migrate                  # Run migrations
+docker compose exec app php artisan migrate:fresh --seed     # Reset and seed database
 ```
 
 ### Testing & Code Quality
 ```bash
-composer test              # Run tests (clears config first)
-php artisan test --filter TestClassName  # Run specific test
-./vendor/bin/pint          # Format code with Laravel Pint
-./vendor/bin/pint --test   # Check formatting without fixing
-```
-
-### Artisan Generators
-```bash
-php artisan make:controller ControllerName --resource
-php artisan make:model ModelName -mfs  # With migration, factory, seeder
-php artisan make:request RequestName
+docker compose exec app composer test              # Run tests
+docker compose exec app php artisan test --filter TestClassName
+docker compose exec app ./vendor/bin/pint          # Format code
+docker compose exec app ./vendor/bin/pint --test   # Check formatting
 ```
 
 ## Architecture

@@ -26,7 +26,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'site_settings' => fn () => Schema::hasTable('site_settings')
-                ? SiteSetting::allAsArray()
+                ? SiteSetting::allAsArray(app()->getLocale())
                 : [],
             'cartItemsCount' => fn () => collect($request->session()->get('cart', []))->sum('quantity'),
             'flash' => [

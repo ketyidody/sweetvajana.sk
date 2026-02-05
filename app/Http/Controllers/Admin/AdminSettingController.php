@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Language;
 use App\Models\SiteSetting;
+use App\Models\SiteSettingTranslation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -14,6 +16,14 @@ class AdminSettingController extends Controller
     {
         return Inertia::render('Admin/Settings', [
             'settings' => SiteSetting::allAsArray(),
+            'settingTranslations' => SiteSetting::translationsForAdmin(),
+            'translatableKeys' => SiteSetting::TRANSLATABLE_KEYS,
+            'languages' => Language::getActive()->map(fn ($l) => [
+                'code' => $l->code,
+                'name' => $l->name,
+                'native_name' => $l->native_name,
+                'is_default' => $l->is_default,
+            ]),
         ]);
     }
 
@@ -35,12 +45,15 @@ class AdminSettingController extends Controller
             'footer_text' => 'nullable|string',
             'favicon' => 'nullable|image|mimes:ico,png,svg,jpg,jpeg|max:2048',
             'logo' => 'nullable|image|max:5120',
+            'translations' => 'nullable|array',
+            'translations.*' => 'nullable|array',
+            'translations.*.*' => 'nullable|string',
         ]);
 
         $fileFields = ['hero_image', 'favicon', 'logo'];
 
         foreach ($validated as $key => $value) {
-            if (in_array($key, $fileFields)) {
+            if (in_array($key, $fileFields) || $key === 'translations') {
                 continue;
             }
             SiteSetting::set($key, $value);
@@ -62,6 +75,28 @@ class AdminSettingController extends Controller
             SiteSetting::set('favicon', Storage::url(
                 $request->file('favicon')->store('settings', 'public')
             ));
+        }
+
+        // Save translations
+        if ($translations = $request->input('translations')) {
+            $settingsByKey = SiteSetting::whereIn('key', SiteSetting::TRANSLATABLE_KEYS)
+                ->pluck('id', 'key');
+
+            foreach ($translations as $locale => $fields) {
+                foreach ($fields as $key => $value) {
+                    if (! isset($settingsByKey[$key])) {
+                        continue;
+                    }
+
+                    SiteSettingTranslation::updateOrCreate(
+                        [
+                            'site_setting_id' => $settingsByKey[$key],
+                            'locale' => $locale,
+                        ],
+                        ['value' => $value]
+                    );
+                }
+            }
         }
 
         return redirect()->back()->with('success', 'Settings updated.');
