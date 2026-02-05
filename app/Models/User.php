@@ -17,6 +17,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'locale',
         'phone',
         'shipping_address',
         'billing_address',

@@ -1,10 +1,10 @@
 <template>
-  <Head title="Products" />
+  <Head :title="t('product.products')" />
   <div class="min-h-screen flex flex-col bg-background">
-    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit('/cart')" />
+    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
 
     <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 class="text-3xl md:text-4xl mb-8">Products</h1>
+      <h1 class="text-3xl md:text-4xl mb-8">{{ t('product.products') }}</h1>
 
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Filters Sidebar -->
@@ -12,7 +12,7 @@
           <div class="space-y-6">
             <!-- Category Filter -->
             <div>
-              <h3 class="font-medium mb-3">Category</h3>
+              <h3 class="font-medium mb-3">{{ t('product.category') }}</h3>
               <ul class="space-y-2">
                 <li>
                   <button
@@ -20,7 +20,7 @@
                     :class="!filters.category ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'"
                     @click="applyFilter('category', null)"
                   >
-                    All
+                    {{ t('product.all') }}
                   </button>
                 </li>
                 <li v-for="category in categories" :key="category.slug">
@@ -37,7 +37,7 @@
 
             <!-- Price Filter -->
             <div>
-              <h3 class="font-medium mb-3">Price Range</h3>
+              <h3 class="font-medium mb-3">{{ t('product.price_range') }}</h3>
               <div class="flex items-center gap-2">
                 <input
                   v-model="priceMin"
@@ -63,7 +63,7 @@
                 class="mt-2 text-sm text-primary hover:text-primary/80 transition-colors"
                 @click="applyPriceFilter"
               >
-                Apply
+                {{ t('common.apply') }}
               </button>
             </div>
 
@@ -73,7 +73,7 @@
               class="text-sm text-destructive hover:text-destructive/80 transition-colors"
               @click="clearFilters"
             >
-              Clear all filters
+              {{ t('product.clear_filters') }}
             </button>
           </div>
         </aside>
@@ -88,7 +88,7 @@
             />
           </div>
           <div v-else class="text-center py-16">
-            <p class="text-muted-foreground text-lg">No products found matching your filters.</p>
+            <p class="text-muted-foreground text-lg">{{ t('product.no_products_found') }}</p>
           </div>
 
           <!-- Pagination -->
@@ -179,6 +179,11 @@ import { ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Chevr
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import ProductCard from '@/Components/Product/ProductCard.vue'
+import { useTranslation } from '@/composables/useTranslation'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useTranslation()
+const { localizedUrl } = useLocale()
 
 const props = defineProps({
   products: Object,
@@ -231,7 +236,7 @@ function pageUrl(page) {
   const query = new URLSearchParams(
     Object.entries(params).filter(([, v]) => v != null)
   ).toString()
-  return '/products' + (query ? '?' + query : '')
+  return localizedUrl('/products') + (query ? '?' + query : '')
 }
 
 function applyFilter(key, value) {
@@ -241,7 +246,7 @@ function applyFilter(key, value) {
   } else {
     delete params[key]
   }
-  router.get('/products', params, { preserveState: true })
+  router.get(localizedUrl('/products'), params, { preserveState: true })
 }
 
 function applyPriceFilter() {
@@ -256,12 +261,12 @@ function applyPriceFilter() {
   } else {
     delete params.max_price
   }
-  router.get('/products', params, { preserveState: true })
+  router.get(localizedUrl('/products'), params, { preserveState: true })
 }
 
 function clearFilters() {
   priceMin.value = ''
   priceMax.value = ''
-  router.get('/products', {}, { preserveState: true })
+  router.get(localizedUrl('/products'), {}, { preserveState: true })
 }
 </script>

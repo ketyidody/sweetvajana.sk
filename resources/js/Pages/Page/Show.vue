@@ -1,7 +1,7 @@
 <template>
   <Head :title="page.title" />
   <div class="min-h-screen flex flex-col bg-background">
-    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit('/cart')" />
+    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
 
     <main class="flex-1">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-3xl">
@@ -19,6 +19,9 @@ import { computed } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
+import { useLocale } from '@/composables/useLocale'
+
+const { localizedUrl } = useLocale()
 
 const props = defineProps({
   page: Object,

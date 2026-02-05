@@ -1,16 +1,16 @@
 <template>
   <Head :title="product.name" />
   <div class="min-h-screen flex flex-col bg-background">
-    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit('/cart')" />
+    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
 
     <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Back link -->
       <Link
-        href="/products"
+        :href="localizedUrl('/products')"
         class="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeftIcon class="w-4 h-4" />
-        Back to Products
+        {{ t('product.back_to_products') }}
       </Link>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
@@ -56,7 +56,7 @@
             >
               <CheckCircleIcon v-if="product.stock > 0" class="w-4 h-4" />
               <XCircleIcon v-else class="w-4 h-4" />
-              {{ product.stock > 0 ? `In stock (${product.stock})` : 'Out of stock' }}
+              {{ product.stock > 0 ? t('product.in_stock', { count: product.stock }) : t('product.out_of_stock') }}
             </span>
           </div>
 
@@ -93,7 +93,7 @@
               @click="addToCart"
             >
               <ShoppingCartIcon class="w-4 h-4" />
-              Add to Cart
+              {{ t('common.add_to_cart') }}
             </button>
           </div>
         </div>
@@ -110,6 +110,11 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import { ArrowLeft as ArrowLeftIcon, CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, Minus as MinusIcon, Plus as PlusIcon, ShoppingCart as ShoppingCartIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
+import { useTranslation } from '@/composables/useTranslation'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useTranslation()
+const { localizedUrl } = useLocale()
 
 const props = defineProps({
   product: Object,
@@ -125,6 +130,6 @@ function clampQuantity() {
 }
 
 function addToCart() {
-  router.post('/cart', { product_id: props.product.id, quantity: quantity.value }, { preserveScroll: true })
+  router.post(localizedUrl('/cart'), { product_id: props.product.id, quantity: quantity.value }, { preserveScroll: true })
 }
 </script>

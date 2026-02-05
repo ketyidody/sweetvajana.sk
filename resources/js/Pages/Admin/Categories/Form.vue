@@ -25,6 +25,35 @@
           <p v-if="form.errors.description" class="text-destructive text-xs mt-1">{{ form.errors.description }}</p>
         </div>
 
+        <!-- Translations -->
+        <div v-if="nonDefaultLanguages.length" class="border border-border rounded-md p-4 space-y-4">
+          <button type="button" @click="showTranslations = !showTranslations" class="text-sm font-medium flex items-center gap-2">
+            <ChevronDownIcon :class="['w-4 h-4 transition-transform', showTranslations ? 'rotate-0' : '-rotate-90']" />
+            Translations
+          </button>
+          <div v-if="showTranslations" class="space-y-4">
+            <div v-for="lang in nonDefaultLanguages" :key="lang.code" class="space-y-2 border-t border-border pt-3">
+              <p class="text-xs font-medium text-muted-foreground uppercase">{{ lang.name }} ({{ lang.code }})</p>
+              <div>
+                <label class="block text-xs text-muted-foreground mb-1">Name</label>
+                <input
+                  v-model="form.translations[lang.code].name"
+                  type="text"
+                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+                />
+              </div>
+              <div>
+                <label class="block text-xs text-muted-foreground mb-1">Description</label>
+                <textarea
+                  v-model="form.translations[lang.code].description"
+                  rows="2"
+                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div>
           <label class="block text-sm font-medium mb-1">Image</label>
           <input
@@ -60,18 +89,39 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
+import { ChevronDown as ChevronDownIcon } from 'lucide-vue-next'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
   category: { type: Object, default: null },
+  categoryTranslations: { type: Object, default: () => ({}) },
+  languages: { type: Array, default: () => [] },
+  defaultLocale: { type: String, default: 'sk' },
 })
+
+const showTranslations = ref(!!props.category)
+
+const nonDefaultLanguages = computed(() =>
+  props.languages.filter(l => l.code !== props.defaultLocale)
+)
+
+// Build translations form data
+const translationsData = {}
+for (const lang of nonDefaultLanguages.value) {
+  translationsData[lang.code] = {
+    name: props.categoryTranslations?.[lang.code]?.name ?? '',
+    description: props.categoryTranslations?.[lang.code]?.description ?? '',
+  }
+}
 
 const form = useForm({
   name: props.category?.name ?? '',
   description: props.category?.description ?? '',
   image: null,
   is_active: props.category?.is_active ?? true,
+  translations: translationsData,
 })
 
 function submit() {

@@ -14,11 +14,14 @@ defineProps({
     },
 });
 
-const user = usePage().props.auth.user;
+const page = usePage();
+const user = page.props.auth.user;
+const languages = page.props.languages || [];
 
 const form = useForm({
     name: user.name,
     email: user.email,
+    locale: user.locale || '',
 });
 </script>
 
@@ -67,6 +70,23 @@ const form = useForm({
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div v-if="languages.length > 1">
+                <InputLabel for="locale" value="Language" />
+
+                <select
+                    id="locale"
+                    v-model="form.locale"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                >
+                    <option value="">Default</option>
+                    <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+                        {{ lang.native_name }}
+                    </option>
+                </select>
+
+                <InputError class="mt-2" :message="form.errors.locale" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">

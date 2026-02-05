@@ -31,11 +31,13 @@
 <script setup>
 import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { useTranslation } from '@/composables/useTranslation'
 
+const { t } = useTranslation()
 const settings = computed(() => usePage().props.site_settings || {})
 
-const heroTitle = computed(() => settings.value.hero_title || 'Handcrafted Cakes & Sweets')
-const heroSubtitle = computed(() => settings.value.hero_subtitle || 'Discover our delicious selection of freshly baked cakes, pastries, and sweet treats made with love.')
+const heroTitle = computed(() => settings.value.hero_title || t('product.featured'))
+const heroSubtitle = computed(() => settings.value.hero_subtitle || t('product.featured_subtitle'))
 const heroImage = computed(() => settings.value.hero_image || 'https://images.unsplash.com/photo-1542200684142-9e7bf8ce104b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYWtlcnklMjBoZXJvfGVufDF8fHx8MTc2ODA2MjY0NXww&ixlib=rb-4.1.0&q=80&w=1080')
-const heroCtaText = computed(() => settings.value.hero_cta_text || 'Shop Now')
+const heroCtaText = computed(() => settings.value.hero_cta_text || t('common.shop_now'))
 </script>

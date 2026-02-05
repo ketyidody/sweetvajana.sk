@@ -1,5 +1,5 @@
 <template>
-  <footer id="contact" class="bg-muted border-t border-border mt-20">
+  <footer id="contact" class="bg-muted border-t border-border">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- About -->
@@ -12,26 +12,26 @@
 
         <!-- Quick Links -->
         <div>
-          <h3 class="mb-4">Quick Links</h3>
+          <h3 class="mb-4">{{ t('footer.quick_links') }}</h3>
           <nav class="space-y-2">
-            <Link href="/" class="block text-muted-foreground hover:text-foreground transition-colors">
-              Home
+            <Link :href="localizedUrl('/')" class="block text-muted-foreground hover:text-foreground transition-colors">
+              {{ t('nav.home') }}
             </Link>
-            <Link href="/products" class="block text-muted-foreground hover:text-foreground transition-colors">
-              Products
+            <Link :href="localizedUrl('/products')" class="block text-muted-foreground hover:text-foreground transition-colors">
+              {{ t('nav.products') }}
             </Link>
-            <Link href="/about" class="block text-muted-foreground hover:text-foreground transition-colors">
-              About
+            <Link :href="localizedUrl('/about')" class="block text-muted-foreground hover:text-foreground transition-colors">
+              {{ t('nav.about') }}
             </Link>
-            <Link href="/contact" class="block text-muted-foreground hover:text-foreground transition-colors">
-              Contact
+            <Link :href="localizedUrl('/contact')" class="block text-muted-foreground hover:text-foreground transition-colors">
+              {{ t('nav.contact') }}
             </Link>
           </nav>
         </div>
 
         <!-- Contact & Social -->
         <div>
-          <h3 class="mb-4">Get In Touch</h3>
+          <h3 class="mb-4">{{ t('footer.get_in_touch') }}</h3>
           <div class="space-y-3">
             <a :href="'tel:' + (settings.phone || '+1234567890')" class="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
               <PhoneIcon class="h-4 w-4" />
@@ -54,7 +54,7 @@
       </div>
 
       <div class="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-        <p>{{ settings.footer_text || `© ${currentYear} Sweet Vajana. All rights reserved.` }}</p>
+        <p>{{ settings.footer_text || `© ${currentYear} Sweet Vajana. ${t('footer.copyright')}` }}</p>
       </div>
     </div>
   </footer>
@@ -64,7 +64,11 @@
 import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { Instagram as InstagramIcon, Facebook as FacebookIcon, Mail as MailIcon, Phone as PhoneIcon } from 'lucide-vue-next'
+import { useTranslation } from '@/composables/useTranslation'
+import { useLocale } from '@/composables/useLocale'
 
+const { t } = useTranslation()
+const { localizedUrl } = useLocale()
 const settings = computed(() => usePage().props.site_settings || {})
 const currentYear = computed(() => new Date().getFullYear())
 </script>

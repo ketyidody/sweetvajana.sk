@@ -6,10 +6,12 @@ use App\Http\Controllers\AccountOrderController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminLanguageController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminTranslationController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -22,26 +24,38 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/products', [ProductController::class, 'index'])->name('products');
-Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
-Route::get('/pages/{page:slug}', [PageController::class, 'show'])->name('pages.show');
-Route::get('/about', fn () => app(PageController::class)->show(\App\Models\Page::where('slug', 'about')->firstOrFail()))->name('about');
-Route::get('/contact', [ContactController::class, 'show'])->name('contact');
-Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+// Public routes definition (reused for default and prefixed locales)
+$publicRoutes = function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/products', [ProductController::class, 'index'])->name('products');
+    Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+    Route::get('/pages/{page:slug}', [PageController::class, 'show'])->name('pages.show');
+    Route::get('/about', fn () => app(PageController::class)->show(\App\Models\Page::where('slug', 'about')->firstOrFail()))->name('about');
+    Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+    Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-// Cart routes
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
-Route::patch('/cart/{productId}', [CartController::class, 'update'])->name('cart.update');
-Route::delete('/cart/{productId}', [CartController::class, 'remove'])->name('cart.remove');
+    // Cart routes
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/{productId}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{productId}', [CartController::class, 'remove'])->name('cart.remove');
 
-// Checkout routes
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    // Checkout routes
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-// Order confirmation
-Route::get('/orders/{order}/confirmation', [OrderConfirmationController::class, 'show'])->name('orders.confirmation');
+    // Order confirmation
+    Route::get('/orders/{order}/confirmation', [OrderConfirmationController::class, 'show'])->name('orders.confirmation');
+};
+
+// 1. Default locale (no prefix)
+Route::middleware('set-locale')->group($publicRoutes);
+
+// 2. Non-default locales (/{locale}/...)
+Route::prefix('{locale}')
+    ->where(['locale' => '[a-z]{2}'])
+    ->middleware('set-locale')
+    ->group($publicRoutes);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -51,10 +65,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/locale', [ProfileController::class, 'updateLocale'])->name('locale.update');
 });
 
 // Admin routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('categories', AdminCategoryController::class)->except('show');
@@ -77,6 +92,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
     Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+    Route::resource('languages', AdminLanguageController::class)->except('show');
+    Route::get('translations', [AdminTranslationController::class, 'index'])->name('translations.index');
+    Route::post('translations', [AdminTranslationController::class, 'update'])->name('translations.update');
 });
 
 // Account routes

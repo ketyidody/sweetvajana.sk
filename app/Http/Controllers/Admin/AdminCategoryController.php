@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Language;
+use App\Models\ModelTranslation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +22,10 @@ class AdminCategoryController extends Controller
 
     public function create()
     {
-        return Inertia::render('Admin/Categories/Form');
+        return Inertia::render('Admin/Categories/Form', [
+            'languages' => Language::getActive(),
+            'defaultLocale' => Language::getDefault()?->code ?? 'sk',
+        ]);
     }
 
     public function store(Request $request)
@@ -30,6 +35,9 @@ class AdminCategoryController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
+            'translations' => 'nullable|array',
+            'translations.*.name' => 'nullable|string|max:255',
+            'translations.*.description' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -40,7 +48,12 @@ class AdminCategoryController extends Controller
             );
         }
 
-        Category::create($validated);
+        $translations = $validated['translations'] ?? [];
+        unset($validated['translations']);
+
+        $category = Category::create($validated);
+
+        $this->saveTranslations($category, $translations);
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category created.');
@@ -48,8 +61,18 @@ class AdminCategoryController extends Controller
 
     public function edit(Category $category)
     {
+        $category->load('translations');
+
+        $translationData = [];
+        foreach ($category->translations as $t) {
+            $translationData[$t->locale][$t->field] = $t->value;
+        }
+
         return Inertia::render('Admin/Categories/Form', [
             'category' => $category,
+            'categoryTranslations' => $translationData,
+            'languages' => Language::getActive(),
+            'defaultLocale' => Language::getDefault()?->code ?? 'sk',
         ]);
     }
 
@@ -60,6 +83,9 @@ class AdminCategoryController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
+            'translations' => 'nullable|array',
+            'translations.*.name' => 'nullable|string|max:255',
+            'translations.*.description' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -70,7 +96,12 @@ class AdminCategoryController extends Controller
             );
         }
 
+        $translations = $validated['translations'] ?? [];
+        unset($validated['translations']);
+
         $category->update($validated);
+
+        $this->saveTranslations($category, $translations);
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category updated.');
@@ -78,9 +109,29 @@ class AdminCategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        $category->translations()->delete();
         $category->delete();
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category deleted.');
+    }
+
+    private function saveTranslations(Category $category, array $translations): void
+    {
+        foreach ($translations as $locale => $fields) {
+            foreach ($fields as $field => $value) {
+                if (in_array($field, Category::translatableFields())) {
+                    ModelTranslation::updateOrCreate(
+                        [
+                            'translatable_type' => Category::class,
+                            'translatable_id' => $category->id,
+                            'locale' => $locale,
+                            'field' => $field,
+                        ],
+                        ['value' => $value ?? '']
+                    );
+                }
+            }
+        }
     }
 }

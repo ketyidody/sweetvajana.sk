@@ -1,7 +1,7 @@
 <template>
   <div
     class="group bg-card rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300 cursor-pointer"
-    @click="router.visit('/products/' + product.slug)"
+    @click="router.visit(localizedUrl('/products/' + product.slug))"
   >
     <div class="aspect-square overflow-hidden bg-muted">
       <img
@@ -28,9 +28,9 @@
           @click.stop="addToCart"
         >
           <ShoppingCartIcon class="w-3.5 h-3.5" />
-          Add to Cart
+          {{ t('common.add_to_cart') }}
         </button>
-        <span v-else class="text-xs text-muted-foreground">Out of stock</span>
+        <span v-else class="text-xs text-muted-foreground">{{ t('product.out_of_stock') }}</span>
       </div>
     </div>
   </div>
@@ -39,6 +39,11 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
 import { ShoppingCart as ShoppingCartIcon } from 'lucide-vue-next'
+import { useTranslation } from '@/composables/useTranslation'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useTranslation()
+const { localizedUrl } = useLocale()
 
 const props = defineProps({
   product: {
@@ -48,7 +53,7 @@ const props = defineProps({
 })
 
 function addToCart() {
-  router.post('/cart', { product_id: props.product.id, quantity: 1 }, { preserveScroll: true })
+  router.post(localizedUrl('/cart'), { product_id: props.product.id, quantity: 1 }, { preserveScroll: true })
 }
 </script>
 

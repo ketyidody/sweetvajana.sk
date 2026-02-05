@@ -23,6 +23,35 @@
           <p v-if="form.errors.content" class="text-destructive text-xs mt-1">{{ form.errors.content }}</p>
         </div>
 
+        <!-- Translations -->
+        <div v-if="nonDefaultLanguages.length" class="border border-border rounded-md p-4 space-y-4">
+          <button type="button" @click="showTranslations = !showTranslations" class="text-sm font-medium flex items-center gap-2">
+            <ChevronDownIcon :class="['w-4 h-4 transition-transform', showTranslations ? 'rotate-0' : '-rotate-90']" />
+            Translations
+          </button>
+          <div v-if="showTranslations" class="space-y-4">
+            <div v-for="lang in nonDefaultLanguages" :key="lang.code" class="space-y-2 border-t border-border pt-3">
+              <p class="text-xs font-medium text-muted-foreground uppercase">{{ lang.name }} ({{ lang.code }})</p>
+              <div>
+                <label class="block text-xs text-muted-foreground mb-1">Title</label>
+                <input
+                  v-model="form.translations[lang.code].title"
+                  type="text"
+                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+                />
+              </div>
+              <div>
+                <label class="block text-xs text-muted-foreground mb-1">Content</label>
+                <textarea
+                  v-model="form.translations[lang.code].content"
+                  rows="6"
+                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm font-mono"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="flex items-center gap-2">
           <input v-model="form.is_active" type="checkbox" id="is_active" class="rounded" />
           <label for="is_active" class="text-sm">Active</label>
@@ -46,18 +75,38 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
+import { ChevronDown as ChevronDownIcon } from 'lucide-vue-next'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
   page: { type: Object, default: null },
+  pageTranslations: { type: Object, default: () => ({}) },
+  languages: { type: Array, default: () => [] },
+  defaultLocale: { type: String, default: 'sk' },
 })
+
+const showTranslations = ref(!!props.page)
+
+const nonDefaultLanguages = computed(() =>
+  props.languages.filter(l => l.code !== props.defaultLocale)
+)
+
+const translationsData = {}
+for (const lang of nonDefaultLanguages.value) {
+  translationsData[lang.code] = {
+    title: props.pageTranslations?.[lang.code]?.title ?? '',
+    content: props.pageTranslations?.[lang.code]?.content ?? '',
+  }
+}
 
 const form = useForm({
   title: props.page?.title ?? '',
   slug: props.page?.slug ?? '',
   content: props.page?.content ?? '',
   is_active: props.page?.is_active ?? true,
+  translations: translationsData,
 })
 
 function submit() {

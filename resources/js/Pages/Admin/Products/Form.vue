@@ -26,6 +26,35 @@
           <p v-if="form.errors.description" class="text-destructive text-xs mt-1">{{ form.errors.description }}</p>
         </div>
 
+        <!-- Translations -->
+        <div v-if="nonDefaultLanguages.length" class="border border-border rounded-md p-4 space-y-4">
+          <button type="button" @click="showTranslations = !showTranslations" class="text-sm font-medium flex items-center gap-2">
+            <ChevronDownIcon :class="['w-4 h-4 transition-transform', showTranslations ? 'rotate-0' : '-rotate-90']" />
+            Translations
+          </button>
+          <div v-if="showTranslations" class="space-y-4">
+            <div v-for="lang in nonDefaultLanguages" :key="lang.code" class="space-y-2 border-t border-border pt-3">
+              <p class="text-xs font-medium text-muted-foreground uppercase">{{ lang.name }} ({{ lang.code }})</p>
+              <div>
+                <label class="block text-xs text-muted-foreground mb-1">Name</label>
+                <input
+                  v-model="form.translations[lang.code].name"
+                  type="text"
+                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+                />
+              </div>
+              <div>
+                <label class="block text-xs text-muted-foreground mb-1">Description</label>
+                <textarea
+                  v-model="form.translations[lang.code].description"
+                  rows="2"
+                  class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium mb-1">Price</label>
@@ -67,7 +96,7 @@
                 @click="removeExistingImage(i)"
                 class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <X class="w-3 h-3" />
+                <XIcon class="w-3 h-3" />
               </button>
             </div>
             <div v-for="(preview, i) in newImagePreviews" :key="'new-' + i" class="relative group">
@@ -77,7 +106,7 @@
                 @click="removeNewImage(i)"
                 class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <X class="w-3 h-3" />
+                <XIcon class="w-3 h-3" />
               </button>
             </div>
           </div>
@@ -112,20 +141,36 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
-import { X } from 'lucide-vue-next'
+import { X as XIcon, ChevronDown as ChevronDownIcon } from 'lucide-vue-next'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
   product: { type: Object, default: null },
   categories: Array,
+  productTranslations: { type: Object, default: () => ({}) },
+  languages: { type: Array, default: () => [] },
+  defaultLocale: { type: String, default: 'sk' },
 })
 
+const showTranslations = ref(!!props.product)
 const additionalImagesInput = ref(null)
 const existingImages = reactive([...(props.product?.images ?? [])])
 const newImages = ref([])
 const newImagePreviews = ref([])
+
+const nonDefaultLanguages = computed(() =>
+  props.languages.filter(l => l.code !== props.defaultLocale)
+)
+
+const translationsData = {}
+for (const lang of nonDefaultLanguages.value) {
+  translationsData[lang.code] = {
+    name: props.productTranslations?.[lang.code]?.name ?? '',
+    description: props.productTranslations?.[lang.code]?.description ?? '',
+  }
+}
 
 const form = useForm({
   category_id: props.product?.category_id ?? '',
@@ -138,6 +183,7 @@ const form = useForm({
   existing_images: [],
   is_active: props.product?.is_active ?? true,
   is_featured: props.product?.is_featured ?? false,
+  translations: translationsData,
 })
 
 function onAdditionalImages(e) {

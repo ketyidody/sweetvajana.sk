@@ -3,29 +3,31 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 md:h-20">
         <!-- Logo -->
-        <Link href="/" class="flex-shrink-0">
+        <Link :href="localizedUrl('/')" class="flex-shrink-0">
           <img v-if="settings.logo" :src="settings.logo" :alt="settings.site_name || 'Sweet Vajana'" class="h-12 md:h-15 w-auto object-contain" />
           <span v-else class="text-xl md:text-2xl tracking-tight">{{ settings.site_name || 'Sweet Vajana' }}</span>
         </Link>
 
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center space-x-8">
-          <Link href="/" class="text-foreground hover:text-foreground/70 transition-colors">
-            Home
+          <Link :href="localizedUrl('/')" class="text-foreground hover:text-foreground/70 transition-colors">
+            {{ t('nav.home') }}
           </Link>
-          <Link href="/products" class="text-foreground hover:text-foreground/70 transition-colors">
-            Products
+          <Link :href="localizedUrl('/products')" class="text-foreground hover:text-foreground/70 transition-colors">
+            {{ t('nav.products') }}
           </Link>
-          <Link href="/about" class="text-foreground hover:text-foreground/70 transition-colors">
-            About
+          <Link :href="localizedUrl('/about')" class="text-foreground hover:text-foreground/70 transition-colors">
+            {{ t('nav.about') }}
           </Link>
-          <Link href="/contact" class="text-foreground hover:text-foreground/70 transition-colors">
-            Contact
+          <Link :href="localizedUrl('/contact')" class="text-foreground hover:text-foreground/70 transition-colors">
+            {{ t('nav.contact') }}
           </Link>
         </nav>
 
-        <!-- Cart Button -->
-        <div class="flex items-center gap-4">
+        <!-- Cart + Language + Mobile Menu -->
+        <div class="flex items-center gap-2">
+          <LanguageSwitcher />
+
           <Button
             variant="outline"
             size="icon"
@@ -55,32 +57,32 @@
       <!-- Mobile Navigation -->
       <nav v-if="isMobileMenuOpen" class="md:hidden py-4 space-y-4 border-t border-border">
         <Link
-          href="/"
+          :href="localizedUrl('/')"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
-          Home
+          {{ t('nav.home') }}
         </Link>
         <Link
-          href="/products"
+          :href="localizedUrl('/products')"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
-          Products
+          {{ t('nav.products') }}
         </Link>
         <Link
-          href="/about"
+          :href="localizedUrl('/about')"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
-          About
+          {{ t('nav.about') }}
         </Link>
         <Link
-          href="/contact"
+          :href="localizedUrl('/contact')"
           class="block text-foreground hover:text-foreground/70 transition-colors"
           @click="isMobileMenuOpen = false"
         >
-          Contact
+          {{ t('nav.contact') }}
         </Link>
       </nav>
     </div>
@@ -92,6 +94,9 @@ import { computed, ref } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { ShoppingCart as ShoppingCartIcon, Menu as MenuIcon, X as XIcon } from 'lucide-vue-next'
 import Button from '@/Components/UI/Button.vue'
+import LanguageSwitcher from '@/Components/Layout/LanguageSwitcher.vue'
+import { useTranslation } from '@/composables/useTranslation'
+import { useLocale } from '@/composables/useLocale'
 
 defineProps({
   cartItemsCount: {
@@ -102,6 +107,8 @@ defineProps({
 
 defineEmits(['cart-click'])
 
+const { t } = useTranslation()
+const { localizedUrl } = useLocale()
 const settings = computed(() => usePage().props.site_settings || {})
 const isMobileMenuOpen = ref(false)
 </script>

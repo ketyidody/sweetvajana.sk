@@ -11,8 +11,14 @@ class PageController extends Controller
     {
         abort_unless($page->is_active, 404);
 
+        $page->load('translations');
+
         return Inertia::render('Page/Show', [
-            'page' => $page,
+            'page' => [
+                'title' => $page->translated('title'),
+                'content' => $page->translated('content'),
+                'slug' => $page->slug,
+            ],
         ]);
     }
 }

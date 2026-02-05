@@ -103,6 +103,8 @@ import {
   Settings as SettingsIcon,
   MessageSquare as MessagesIcon,
   Users as UsersIcon,
+  Globe as GlobeIcon,
+  Languages as LanguagesIcon,
   ArrowLeft as ArrowLeftIcon,
   LogOut as LogOutIcon,
   Menu as MenuIcon,
@@ -121,6 +123,8 @@ const navItems = [
   { href: '/admin/contact-messages', label: 'Messages', icon: MessagesIcon },
   { href: '/admin/settings', label: 'Settings', icon: SettingsIcon },
   { href: '/admin/users', label: 'Users', icon: UsersIcon },
+  { href: '/admin/languages', label: 'Languages', icon: GlobeIcon },
+  { href: '/admin/translations', label: 'Translations', icon: LanguagesIcon },
 ]
 
 function isActive(href) {

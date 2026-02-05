@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function show(Product $product)
     {
-        $product->load('category');
+        $product->load(['category.translations', 'translations']);
 
         $allImages = collect([$product->image])
             ->merge($product->images ?? [])
@@ -21,14 +21,14 @@ class ProductController extends Controller
         return Inertia::render('Products/Show', [
             'product' => [
                 'id' => $product->id,
-                'name' => $product->name,
+                'name' => $product->translated('name'),
                 'slug' => $product->slug,
-                'description' => $product->description,
+                'description' => $product->translated('description'),
                 'price' => $product->price,
                 'stock' => $product->stock,
                 'image' => $product->image,
                 'images' => $allImages,
-                'category' => $product->category->name,
+                'category' => $product->category->translated('name'),
                 'category_slug' => $product->category->slug,
             ],
         ]);
@@ -36,7 +36,9 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $query = Product::with('category')->where('is_active', true);
+        $query = Product::with(['category.translations'])
+            ->withTranslations()
+            ->where('is_active', true);
 
         if ($request->filled('category')) {
             $query->whereHas('category', function ($q) use ($request) {
@@ -57,17 +59,23 @@ class ProductController extends Controller
             ->withQueryString()
             ->through(fn ($product) => [
                 'id' => $product->id,
-                'name' => $product->name,
+                'name' => $product->translated('name'),
                 'slug' => $product->slug,
-                'description' => $product->description,
+                'description' => $product->translated('description'),
                 'price' => $product->price,
                 'image' => $product->image,
-                'category' => $product->category->name,
+                'stock' => $product->stock,
+                'category' => $product->category->translated('name'),
             ]);
 
-        $categories = Category::where('is_active', true)
+        $categories = Category::withTranslations()
+            ->where('is_active', true)
             ->orderBy('name')
-            ->get(['name', 'slug']);
+            ->get()
+            ->map(fn ($cat) => [
+                'name' => $cat->translated('name'),
+                'slug' => $cat->slug,
+            ]);
 
         return Inertia::render('Products/Index', [
             'products' => $products,

@@ -1,11 +1,11 @@
 <template>
-  <Head title="Contact" />
+  <Head :title="t('contact.title')" />
   <div class="min-h-screen flex flex-col bg-background">
-    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit('/cart')" />
+    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
 
     <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-medium mb-4">Contact Us</h1>
+        <h1 class="text-3xl font-medium mb-4">{{ t('contact.title') }}</h1>
         <p v-if="settings.contact_text" class="text-muted-foreground mb-8">
           {{ settings.contact_text }}
         </p>
@@ -19,7 +19,7 @@
 
             <form @submit.prevent="submit" class="bg-card rounded-lg border border-border p-6 space-y-4">
               <div>
-                <label for="name" class="block text-sm font-medium mb-1">Name</label>
+                <label for="name" class="block text-sm font-medium mb-1">{{ t('contact.name') }}</label>
                 <input
                   id="name"
                   v-model="form.name"
@@ -31,7 +31,7 @@
               </div>
 
               <div>
-                <label for="email" class="block text-sm font-medium mb-1">Email</label>
+                <label for="email" class="block text-sm font-medium mb-1">{{ t('contact.email') }}</label>
                 <input
                   id="email"
                   v-model="form.email"
@@ -43,7 +43,7 @@
               </div>
 
               <div>
-                <label for="subject" class="block text-sm font-medium mb-1">Subject</label>
+                <label for="subject" class="block text-sm font-medium mb-1">{{ t('contact.subject') }}</label>
                 <input
                   id="subject"
                   v-model="form.subject"
@@ -55,7 +55,7 @@
               </div>
 
               <div>
-                <label for="message" class="block text-sm font-medium mb-1">Message</label>
+                <label for="message" class="block text-sm font-medium mb-1">{{ t('contact.message') }}</label>
                 <textarea
                   id="message"
                   v-model="form.message"
@@ -74,7 +74,7 @@
                   :disabled="form.processing"
                   class="px-6 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:bg-primary/90 disabled:opacity-50"
                 >
-                  Send Message
+                  {{ t('contact.send') }}
                 </button>
               </div>
             </form>
@@ -83,7 +83,7 @@
           <!-- Contact Info Sidebar -->
           <div class="space-y-6">
             <div class="bg-card rounded-lg border border-border p-6">
-              <h2 class="text-lg font-medium mb-4">Get In Touch</h2>
+              <h2 class="text-lg font-medium mb-4">{{ t('contact.get_in_touch') }}</h2>
               <div class="space-y-4">
                 <a
                   v-if="settings.phone"
@@ -105,7 +105,7 @@
             </div>
 
             <div v-if="settings.instagram_url || settings.facebook_url" class="bg-card rounded-lg border border-border p-6">
-              <h2 class="text-lg font-medium mb-4">Follow Us</h2>
+              <h2 class="text-lg font-medium mb-4">{{ t('contact.follow_us') }}</h2>
               <div class="flex gap-4">
                 <a
                   v-if="settings.instagram_url"
@@ -142,6 +142,11 @@ import { Head, router, usePage, useForm } from '@inertiajs/vue3'
 import { Phone as PhoneIcon, Mail as MailIcon, Instagram as InstagramIcon, Facebook as FacebookIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
+import { useTranslation } from '@/composables/useTranslation'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useTranslation()
+const { localizedUrl } = useLocale()
 
 const props = defineProps({
   recaptchaSiteKey: String,
@@ -168,14 +173,14 @@ onMounted(() => {
 
 function submit() {
   if (!props.recaptchaSiteKey) {
-    form.post('/contact', { onSuccess: () => form.reset() })
+    form.post(localizedUrl('/contact'), { onSuccess: () => form.reset() })
     return
   }
 
   window.grecaptcha.ready(() => {
     window.grecaptcha.execute(props.recaptchaSiteKey, { action: 'contact' }).then((token) => {
       form.recaptcha_token = token
-      form.post('/contact', { onSuccess: () => form.reset() })
+      form.post(localizedUrl('/contact'), { onSuccess: () => form.reset() })
     })
   })
 }

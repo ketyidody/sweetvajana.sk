@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Language;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,6 +39,20 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit');
+    }
+
+    /**
+     * Update the user's locale preference.
+     */
+    public function updateLocale(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'locale' => ['required', 'string', 'max:5', 'in:'.implode(',', Language::getActiveCodes())],
+        ]);
+
+        $request->user()->update(['locale' => $request->locale]);
+
+        return back();
     }
 
     /**

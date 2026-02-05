@@ -23,6 +23,7 @@ class CheckoutController extends Controller
 
         $products = Product::whereIn('id', array_keys($cart))
             ->where('is_active', true)
+            ->withTranslations()
             ->get()
             ->keyBy('id');
 
@@ -43,7 +44,7 @@ class CheckoutController extends Controller
 
                 $items[] = [
                     'product_id' => $product->id,
-                    'name' => $product->name,
+                    'name' => $product->translated('name'),
                     'price' => $product->price,
                     'image' => $product->image,
                     'quantity' => $quantity,

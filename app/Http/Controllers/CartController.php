@@ -17,6 +17,7 @@ class CartController extends Controller
         if (! empty($cart)) {
             $products = Product::whereIn('id', array_keys($cart))
                 ->where('is_active', true)
+                ->withTranslations()
                 ->get()
                 ->keyBy('id');
 
@@ -29,7 +30,7 @@ class CartController extends Controller
 
                     $items[] = [
                         'product_id' => $product->id,
-                        'name' => $product->name,
+                        'name' => $product->translated('name'),
                         'slug' => $product->slug,
                         'price' => $product->price,
                         'image' => $product->image,
