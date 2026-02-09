@@ -75,7 +75,7 @@ class AdminPageController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:pages,slug,' . $page->id,
+            'slug' => 'nullable|string|max:255|unique:pages,slug,'.$page->id,
             'content' => 'nullable|string',
             'is_active' => 'boolean',
             'translations' => 'nullable|array',

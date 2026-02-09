@@ -13,7 +13,7 @@ class SiteSettingSeeder extends Seeder
             'site_name' => 'Sweet Vajana',
             'hero_title' => 'Handcrafted Cakes & Sweets',
             'hero_subtitle' => 'Discover our delicious selection of freshly baked cakes, pastries, and sweet treats made with love.',
-            'hero_image' => null,
+            'hero_images' => '[]',
             'hero_cta_text' => 'Shop Now',
             'phone' => '+421 123 456 789',
             'email' => 'info@sweetvajana.sk',

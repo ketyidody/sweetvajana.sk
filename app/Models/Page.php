@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     use HasTranslations;
+
     protected $fillable = [
         'title',
         'slug',

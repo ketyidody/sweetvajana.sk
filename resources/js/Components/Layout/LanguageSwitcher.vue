@@ -2,7 +2,8 @@
   <div class="relative" ref="wrapper">
     <button
       @click="open = !open"
-      class="flex items-center gap-1.5 px-2 py-1.5 text-sm text-foreground hover:text-foreground/70 transition-colors rounded-md"
+      class="flex items-center gap-1.5 px-2 py-1.5 text-sm transition-colors duration-500 rounded-md"
+      :class="transparent ? 'text-white hover:text-white/70' : 'text-foreground hover:text-foreground/70'"
     >
       <GlobeIcon class="w-4 h-4" />
       <span class="hidden sm:inline">{{ currentLang?.native_name }}</span>
@@ -32,6 +33,13 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { usePage, router } from '@inertiajs/vue3'
 import { Globe as GlobeIcon, ChevronDown as ChevronDownIcon } from 'lucide-vue-next'
 import { useLocale } from '@/composables/useLocale'
+
+defineProps({
+  transparent: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const { currentLocale, switchLocaleUrl } = useLocale()
 

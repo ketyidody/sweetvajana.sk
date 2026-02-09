@@ -1,7 +1,7 @@
 <template>
   <Head :title="siteSettings.site_name || 'Home'" />
   <div class="min-h-screen flex flex-col bg-background">
-    <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
+    <Header :cart-items-count="cartItemsCount" transparent @cart-click="() => router.visit(localizedUrl('/cart'))" />
 
     <main class="flex-1 bg-pink-500/10">
       <Hero />

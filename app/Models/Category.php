@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Category extends Model
 {
     use HasTranslations;
+
     protected $fillable = [
         'name',
         'slug',

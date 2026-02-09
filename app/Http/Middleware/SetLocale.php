@@ -22,10 +22,10 @@ class SetLocale
             }
 
             if ($locale === $defaultCode) {
-                $path = preg_replace('#^/' . preg_quote($locale, '#') . '(/|$)#', '/', $request->getPathInfo());
+                $path = preg_replace('#^/'.preg_quote($locale, '#').'(/|$)#', '/', $request->getPathInfo());
                 $query = $request->getQueryString();
 
-                return redirect($path . ($query ? '?' . $query : ''), 301);
+                return redirect($path.($query ? '?'.$query : ''), 301);
             }
 
             app()->setLocale($locale);

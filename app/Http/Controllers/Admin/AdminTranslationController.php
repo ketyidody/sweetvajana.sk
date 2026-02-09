@@ -23,7 +23,7 @@ class AdminTranslationController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('key', 'like', "%{$search}%")
-                  ->orWhere('value', 'like', "%{$search}%");
+                    ->orWhere('value', 'like', "%{$search}%");
             });
         }
 

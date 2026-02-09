@@ -33,7 +33,10 @@ class AdminSettingController extends Controller
             'site_name' => 'nullable|string|max:255',
             'hero_title' => 'nullable|string|max:255',
             'hero_subtitle' => 'nullable|string',
-            'hero_image' => 'nullable|image|max:20480',
+            'hero_images' => 'nullable|array',
+            'hero_images.*' => 'image|max:20480',
+            'remove_hero_images' => 'nullable|array',
+            'remove_hero_images.*' => 'string',
             'hero_cta_text' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:255',
             'email' => 'nullable|string|max:255',
@@ -50,7 +53,7 @@ class AdminSettingController extends Controller
             'translations.*.*' => 'nullable|string',
         ]);
 
-        $fileFields = ['hero_image', 'favicon', 'logo'];
+        $fileFields = ['hero_images', 'remove_hero_images', 'favicon', 'logo'];
 
         foreach ($validated as $key => $value) {
             if (in_array($key, $fileFields) || $key === 'translations') {
@@ -59,11 +62,23 @@ class AdminSettingController extends Controller
             SiteSetting::set($key, $value);
         }
 
-        if ($request->hasFile('hero_image')) {
-            SiteSetting::set('hero_image', Storage::url(
-                $request->file('hero_image')->store('settings', 'public')
-            ));
+        // Handle hero images (multiple)
+        $existing = json_decode(SiteSetting::get('hero_images', '[]'), true) ?: [];
+
+        // Remove requested images
+        if ($request->input('remove_hero_images')) {
+            $toRemove = $request->input('remove_hero_images');
+            $existing = array_values(array_filter($existing, fn ($url) => ! in_array($url, $toRemove)));
         }
+
+        // Add new uploads
+        if ($request->hasFile('hero_images')) {
+            foreach ($request->file('hero_images') as $file) {
+                $existing[] = Storage::url($file->store('settings', 'public'));
+            }
+        }
+
+        SiteSetting::set('hero_images', json_encode(array_values($existing)));
 
         if ($request->hasFile('logo')) {
             SiteSetting::set('logo', Storage::url(

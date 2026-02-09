@@ -52,7 +52,7 @@ class AdminLanguageController extends Controller
     public function update(Request $request, Language $language)
     {
         $validated = $request->validate([
-            'code' => 'required|string|max:5|unique:languages,code,' . $language->id,
+            'code' => 'required|string|max:5|unique:languages,code,'.$language->id,
             'name' => 'required|string|max:255',
             'native_name' => 'required|string|max:255',
             'is_default' => 'boolean',

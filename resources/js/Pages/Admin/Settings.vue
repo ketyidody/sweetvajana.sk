@@ -70,11 +70,27 @@
               <textarea v-model="form.hero_subtitle" rows="2" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium mb-1">Hero Image</label>
-              <input type="file" accept="image/*" @change="onHeroImageChange" class="w-full text-sm" />
-              <p class="text-xs text-muted-foreground mt-1">Max 20MB.</p>
-              <img v-if="heroImagePreview" :src="heroImagePreview" class="mt-2 w-40 h-24 rounded object-cover" />
-              <img v-else-if="settings.hero_image" :src="settings.hero_image" class="mt-2 w-40 h-24 rounded object-cover" />
+              <label class="block text-sm font-medium mb-1">Hero Images</label>
+              <input type="file" accept="image/*" multiple @change="onHeroImagesChange" class="w-full text-sm" />
+              <p class="text-xs text-muted-foreground mt-1">Upload multiple images (max 20MB each). They will rotate as a carousel.</p>
+              <div class="flex flex-wrap gap-2 mt-2">
+                <div v-for="(url, i) in existingHeroImages" :key="'existing-' + i" class="relative group">
+                  <img :src="url" class="w-40 h-24 rounded object-cover" />
+                  <button
+                    type="button"
+                    @click="removeExistingHeroImage(i)"
+                    class="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >&times;</button>
+                </div>
+                <div v-for="(preview, i) in heroImagePreviews" :key="'new-' + i" class="relative group">
+                  <img :src="preview" class="w-40 h-24 rounded object-cover ring-2 ring-primary" />
+                  <button
+                    type="button"
+                    @click="removeNewHeroImage(i)"
+                    class="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >&times;</button>
+                </div>
+              </div>
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">CTA Button Text</label>
@@ -258,7 +274,10 @@ const nonDefaultLanguages = computed(() => props.languages.filter(l => !l.is_def
 const activeLocale = ref(defaultLanguage.value.code)
 const activeLanguageName = computed(() => props.languages.find(l => l.code === activeLocale.value)?.native_name || activeLocale.value)
 
-const heroImagePreview = ref(null)
+const existingHeroImages = ref([...(props.settings.hero_images || [])])
+const heroImagePreviews = ref([])
+const newHeroFiles = ref([])
+const removedHeroImages = ref([])
 const faviconPreview = ref(null)
 const logoPreview = ref(null)
 
@@ -278,7 +297,8 @@ const form = useForm({
   site_name: props.settings.site_name ?? '',
   hero_title: props.settings.hero_title ?? '',
   hero_subtitle: props.settings.hero_subtitle ?? '',
-  hero_image: null,
+  hero_images: [],
+  remove_hero_images: [],
   hero_cta_text: props.settings.hero_cta_text ?? '',
   phone: props.settings.phone ?? '',
   email: props.settings.email ?? '',
@@ -298,10 +318,22 @@ function truncate(text, length = 50) {
   return text.length > length ? text.substring(0, length) + '...' : text
 }
 
-function onHeroImageChange(e) {
-  const file = e.target.files[0]
-  form.hero_image = file ?? null
-  heroImagePreview.value = file ? URL.createObjectURL(file) : null
+function onHeroImagesChange(e) {
+  const files = Array.from(e.target.files)
+  for (const file of files) {
+    newHeroFiles.value.push(file)
+    heroImagePreviews.value.push(URL.createObjectURL(file))
+  }
+}
+
+function removeExistingHeroImage(index) {
+  const url = existingHeroImages.value.splice(index, 1)[0]
+  removedHeroImages.value.push(url)
+}
+
+function removeNewHeroImage(index) {
+  newHeroFiles.value.splice(index, 1)
+  heroImagePreviews.value.splice(index, 1)
 }
 
 function onFaviconChange(e) {
@@ -317,6 +349,8 @@ function onLogoChange(e) {
 }
 
 function submit() {
+  form.hero_images = newHeroFiles.value
+  form.remove_hero_images = removedHeroImages.value
   form.post('/admin/settings', { forceFormData: true })
 }
 </script>

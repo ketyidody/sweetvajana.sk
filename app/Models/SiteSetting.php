@@ -39,6 +39,11 @@ class SiteSetting extends Model
     {
         $settings = static::pluck('value', 'key')->toArray();
 
+        // Decode hero_images JSON so frontend receives an array
+        if (isset($settings['hero_images'])) {
+            $settings['hero_images'] = json_decode($settings['hero_images'], true) ?: [];
+        }
+
         if ($locale === null) {
             return $settings;
         }
