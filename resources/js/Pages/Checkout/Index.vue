@@ -108,13 +108,13 @@
                   <p class="text-sm truncate">{{ item.name }}</p>
                   <p class="text-xs text-muted-foreground">{{ t('order.qty') }} {{ item.quantity }}</p>
                 </div>
-                <p class="text-sm flex-shrink-0">${{ item.subtotal }}</p>
+                <p class="text-sm flex-shrink-0">€{{ item.subtotal }}</p>
               </div>
             </div>
             <div class="border-t border-border mt-4 pt-4 space-y-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-muted-foreground">{{ t('cart.subtotal') }}</span>
-                <span>${{ subtotal }}</span>
+                <span>€{{ subtotal }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-muted-foreground">{{ t('cart.shipping') }}</span>
@@ -122,7 +122,7 @@
               </div>
               <div class="border-t border-border pt-2 mt-2 flex justify-between font-medium text-base">
                 <span>{{ t('cart.total') }}</span>
-                <span>${{ total }}</span>
+                <span>€{{ total }}</span>
               </div>
             </div>
           </div>

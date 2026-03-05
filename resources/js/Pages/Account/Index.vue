@@ -52,7 +52,7 @@
                         {{ order.order_number }}
                       </Link>
                     </td>
-                    <td class="p-3">${{ order.total }}</td>
+                    <td class="p-3">€{{ order.total }}</td>
                     <td class="p-3">
                       <span :class="statusClass(order.status)" class="px-2 py-1 rounded-full text-xs">
                         {{ order.status }}

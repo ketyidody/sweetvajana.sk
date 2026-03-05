@@ -25,7 +25,7 @@
               <Link :href="localizedUrl('/products/' + item.slug)" class="font-medium hover:text-primary transition-colors">
                 {{ item.name }}
               </Link>
-              <p class="text-primary mt-1">${{ item.price }}</p>
+              <p class="text-primary mt-1">€{{ item.price }}</p>
               <div class="flex items-center gap-3 mt-2">
                 <div class="flex items-center border border-border rounded-md">
                   <button
@@ -55,7 +55,7 @@
               </div>
             </div>
             <div class="text-right flex-shrink-0">
-              <p class="font-medium">${{ item.subtotal }}</p>
+              <p class="font-medium">€{{ item.subtotal }}</p>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-muted-foreground">{{ t('cart.subtotal') }}</span>
-                <span>${{ subtotal }}</span>
+                <span>€{{ subtotal }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-muted-foreground">{{ t('cart.shipping') }}</span>
@@ -75,7 +75,7 @@
               </div>
               <div class="border-t border-border pt-2 mt-2 flex justify-between font-medium text-base">
                 <span>{{ t('cart.total') }}</span>
-                <span>${{ total }}</span>
+                <span>€{{ total }}</span>
               </div>
             </div>
             <Link

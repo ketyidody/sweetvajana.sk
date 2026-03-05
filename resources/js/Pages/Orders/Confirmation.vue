@@ -26,19 +26,19 @@
             >
               <div>
                 <p>{{ item.product_name }}</p>
-                <p class="text-muted-foreground">{{ t('order.qty') }} {{ item.quantity }} × ${{ item.price }}</p>
+                <p class="text-muted-foreground">{{ t('order.qty') }} {{ item.quantity }} × €{{ item.price }}</p>
               </div>
-              <p>${{ item.subtotal }}</p>
+              <p>€{{ item.subtotal }}</p>
             </div>
           </div>
           <div class="border-t border-border mt-4 pt-4 space-y-2 text-sm">
             <div class="flex justify-between">
               <span class="text-muted-foreground">{{ t('cart.subtotal') }}</span>
-              <span>${{ order.subtotal }}</span>
+              <span>€{{ order.subtotal }}</span>
             </div>
             <div v-if="Number(order.shipping) > 0" class="flex justify-between">
               <span class="text-muted-foreground">{{ t('cart.shipping') }}</span>
-              <span>${{ order.shipping }}</span>
+              <span>€{{ order.shipping }}</span>
             </div>
             <div v-else class="flex justify-between">
               <span class="text-muted-foreground">{{ t('cart.shipping') }}</span>
@@ -46,7 +46,7 @@
             </div>
             <div class="border-t border-border pt-2 mt-2 flex justify-between font-medium text-base">
               <span>{{ t('cart.total') }}</span>
-              <span>${{ order.total }}</span>
+              <span>€{{ order.total }}</span>
             </div>
           </div>
         </div>

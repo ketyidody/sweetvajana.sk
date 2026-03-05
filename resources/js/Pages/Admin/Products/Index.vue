@@ -34,7 +34,7 @@
               </td>
               <td class="p-3 font-medium">{{ product.name }}</td>
               <td class="p-3 text-muted-foreground">{{ product.category?.name }}</td>
-              <td class="p-3">${{ product.price }}</td>
+              <td class="p-3">€{{ product.price }}</td>
               <td class="p-3">{{ product.stock }}</td>
               <td class="p-3">
                 <span :class="product.is_active ? 'text-green-600' : 'text-red-600'" class="text-xs">

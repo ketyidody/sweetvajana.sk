@@ -33,7 +33,7 @@
                 </Link>
               </td>
               <td class="p-3">{{ order.customer_name }}</td>
-              <td class="p-3">${{ order.total }}</td>
+              <td class="p-3">€{{ order.total }}</td>
               <td class="p-3">
                 <span :class="statusClass(order.status)" class="px-2 py-1 rounded-full text-xs">
                   {{ order.status }}
@@ -62,7 +62,7 @@ const props = defineProps({
 
 const statCards = [
   { label: 'Total Orders', value: props.stats.totalOrders },
-  { label: 'Revenue', value: `$${Number(props.stats.totalRevenue).toFixed(2)}` },
+  { label: 'Revenue', value: `€${Number(props.stats.totalRevenue).toFixed(2)}` },
   { label: 'Products', value: props.stats.totalProducts },
   { label: 'Categories', value: props.stats.totalCategories },
   { label: 'Users', value: props.stats.totalUsers },

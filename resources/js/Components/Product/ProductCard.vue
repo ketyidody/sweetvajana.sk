@@ -13,7 +13,7 @@
     <div class="p-4">
       <div class="flex items-start justify-between gap-2 mb-2">
         <h3 class="line-clamp-1">{{ product.name }}</h3>
-        <span class="text-primary flex-shrink-0">${{ product.price }}</span>
+        <span class="text-primary flex-shrink-0">€{{ product.price }}</span>
       </div>
       <p class="text-muted-foreground line-clamp-2 text-sm">
         {{ product.description }}

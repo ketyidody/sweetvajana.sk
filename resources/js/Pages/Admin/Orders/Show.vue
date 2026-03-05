@@ -28,27 +28,27 @@
               <tbody>
                 <tr v-for="item in order.items" :key="item.id" class="border-b border-border last:border-0">
                   <td class="p-3">{{ item.product_name }}</td>
-                  <td class="p-3">${{ item.price }}</td>
+                  <td class="p-3">€{{ item.price }}</td>
                   <td class="p-3">{{ item.quantity }}</td>
-                  <td class="p-3 text-right">${{ item.subtotal }}</td>
+                  <td class="p-3 text-right">€{{ item.subtotal }}</td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr class="border-t border-border">
                   <td colspan="3" class="p-3 text-right text-muted-foreground">Subtotal</td>
-                  <td class="p-3 text-right">${{ order.subtotal }}</td>
+                  <td class="p-3 text-right">€{{ order.subtotal }}</td>
                 </tr>
                 <tr>
                   <td colspan="3" class="p-3 text-right text-muted-foreground">Tax</td>
-                  <td class="p-3 text-right">${{ order.tax }}</td>
+                  <td class="p-3 text-right">€{{ order.tax }}</td>
                 </tr>
                 <tr>
                   <td colspan="3" class="p-3 text-right text-muted-foreground">Shipping</td>
-                  <td class="p-3 text-right">${{ order.shipping }}</td>
+                  <td class="p-3 text-right">€{{ order.shipping }}</td>
                 </tr>
                 <tr class="font-medium">
                   <td colspan="3" class="p-3 text-right">Total</td>
-                  <td class="p-3 text-right">${{ order.total }}</td>
+                  <td class="p-3 text-right">€{{ order.total }}</td>
                 </tr>
               </tfoot>
             </table>

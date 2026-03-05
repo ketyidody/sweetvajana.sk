@@ -46,7 +46,7 @@
             {{ product.category }}
           </span>
           <h1 class="text-3xl md:text-4xl mb-4">{{ product.name }}</h1>
-          <p class="text-2xl text-primary mb-6">${{ product.price }}</p>
+          <p class="text-2xl text-primary mb-6">€{{ product.price }}</p>
           <p class="text-muted-foreground leading-relaxed mb-6">{{ product.description }}</p>
 
           <div class="flex items-center gap-2 text-sm mb-6">
