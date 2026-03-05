@@ -82,6 +82,7 @@ class TranslationSeeder extends Seeder
                 'quick_links' => ['sk' => 'Rychle odkazy', 'en' => 'Quick Links'],
                 'get_in_touch' => ['sk' => 'Spojte sa s nami', 'en' => 'Get In Touch'],
                 'copyright' => ['sk' => 'Vsetky prava vyhradene.', 'en' => 'All rights reserved.'],
+                'terms' => ['sk' => 'Obchodné podmienky', 'en' => 'Terms & Conditions'],
             ],
             'auth' => [
                 'login' => ['sk' => 'Prihlasit sa', 'en' => 'Login'],

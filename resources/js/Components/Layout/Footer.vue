@@ -26,6 +26,9 @@
             <Link :href="localizedUrl('/contact')" class="block text-muted-foreground hover:text-foreground transition-colors">
               {{ t('nav.contact') }}
             </Link>
+            <Link :href="localizedUrl('/pages/terms-and-conditions')" class="block text-muted-foreground hover:text-foreground transition-colors">
+              {{ t('footer.terms') }}
+            </Link>
           </nav>
         </div>
 
