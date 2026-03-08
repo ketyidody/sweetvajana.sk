@@ -5,11 +5,28 @@
 
     <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="max-w-2xl mx-auto">
-        <!-- Success Header -->
+        <!-- Status Header -->
         <div class="text-center mb-8">
-          <CheckCircleIcon class="w-16 h-16 mx-auto text-green-600 mb-4" />
-          <h1 class="text-3xl md:text-4xl mb-2">{{ t('order.confirmed') }}</h1>
-          <p class="text-muted-foreground">
+          <template v-if="order.payment_method === 'gopay' && order.payment_status === 'paid'">
+            <CheckCircleIcon class="w-16 h-16 mx-auto text-green-600 mb-4" />
+            <h1 class="text-3xl md:text-4xl mb-2">{{ t('order.payment_paid') }}</h1>
+            <p class="text-muted-foreground">{{ t('order.payment_paid_desc') }}</p>
+          </template>
+          <template v-else-if="order.payment_method === 'gopay' && order.payment_status === 'failed'">
+            <XCircleIcon class="w-16 h-16 mx-auto text-red-600 mb-4" />
+            <h1 class="text-3xl md:text-4xl mb-2">{{ t('order.payment_failed') }}</h1>
+            <p class="text-muted-foreground">{{ t('order.payment_failed_desc') }}</p>
+          </template>
+          <template v-else-if="order.payment_method === 'gopay' && order.payment_status === 'pending'">
+            <ClockIcon class="w-16 h-16 mx-auto text-yellow-600 mb-4" />
+            <h1 class="text-3xl md:text-4xl mb-2">{{ t('order.payment_pending') }}</h1>
+            <p class="text-muted-foreground">{{ t('order.payment_pending_desc') }}</p>
+          </template>
+          <template v-else>
+            <CheckCircleIcon class="w-16 h-16 mx-auto text-green-600 mb-4" />
+            <h1 class="text-3xl md:text-4xl mb-2">{{ t('order.confirmed') }}</h1>
+          </template>
+          <p class="text-muted-foreground mt-2">
             {{ t('order.thank_you') }}
             <span class="font-medium text-foreground">{{ order.order_number }}</span>
           </p>
@@ -60,6 +77,23 @@
             <p><span class="text-muted-foreground">{{ t('order.phone') }}</span> {{ order.customer_phone }}</p>
             <p><span class="text-muted-foreground">{{ t('order.address') }}</span> {{ order.shipping_address }}</p>
             <p v-if="order.notes"><span class="text-muted-foreground">{{ t('order.notes') }}</span> {{ order.notes }}</p>
+            <p>
+              <span class="text-muted-foreground">{{ t('order.payment_method') }}</span>
+              {{ order.payment_method === 'gopay' ? t('order.method_gopay') : t('order.method_cash_on_delivery') }}
+            </p>
+            <p v-if="order.payment_method === 'gopay'">
+              <span class="text-muted-foreground">{{ t('order.payment_status') }}</span>
+              <span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ml-1"
+                :class="{
+                  'bg-green-100 text-green-800': order.payment_status === 'paid',
+                  'bg-yellow-100 text-yellow-800': order.payment_status === 'pending',
+                  'bg-red-100 text-red-800': order.payment_status === 'failed',
+                }"
+              >
+                {{ order.payment_status === 'paid' ? t('order.status_paid') : order.payment_status === 'failed' ? t('order.status_failed') : t('order.status_pending') }}
+              </span>
+            </p>
           </div>
         </div>
 
@@ -81,7 +115,7 @@
 <script setup>
 import { computed } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
-import { CheckCircle as CheckCircleIcon } from 'lucide-vue-next'
+import { CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, Clock as ClockIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import { useTranslation } from '@/composables/useTranslation'

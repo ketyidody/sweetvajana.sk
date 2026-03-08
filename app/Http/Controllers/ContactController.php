@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
 use App\Models\SiteSetting;
+use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
@@ -13,9 +13,7 @@ class ContactController extends Controller
 {
     public function show()
     {
-        return Inertia::render('Contact', [
-            'recaptchaSiteKey' => config('services.recaptcha.site_key'),
-        ]);
+        return Inertia::render('Contact');
     }
 
     public function submit(Request $request)
@@ -25,20 +23,8 @@ class ContactController extends Controller
             'email' => 'required|email|max:255',
             'subject' => 'required|string|max:255',
             'message' => 'required|string|max:5000',
-            'recaptcha_token' => 'required|string',
+            'recaptcha_token' => ['required', 'string', new Recaptcha],
         ]);
-
-        $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.recaptcha.secret_key'),
-            'response' => $validated['recaptcha_token'],
-            'remoteip' => $request->ip(),
-        ]);
-
-        $recaptchaData = $recaptchaResponse->json();
-
-        if (! ($recaptchaData['success'] ?? false) || ($recaptchaData['score'] ?? 0) < 0.5) {
-            return back()->withErrors(['recaptcha_token' => 'reCAPTCHA verification failed. Please try again.']);
-        }
 
         ContactMessage::create([
             'name' => $validated['name'],

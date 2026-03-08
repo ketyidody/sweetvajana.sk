@@ -79,6 +79,52 @@
               </div>
             </div>
 
+            <!-- Payment Method -->
+            <div class="bg-card rounded-lg border border-border p-6">
+              <h2 class="text-lg font-medium mb-4">{{ t('checkout.payment_method') }}</h2>
+              <div class="space-y-3">
+                <label
+                  class="flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-colors"
+                  :class="form.payment_method === 'gopay' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground/30'"
+                >
+                  <input
+                    v-model="form.payment_method"
+                    type="radio"
+                    name="payment_method"
+                    value="gopay"
+                    class="mt-0.5 accent-primary"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                      <CreditCardIcon class="w-4 h-4 text-muted-foreground" />
+                      <span class="text-sm font-medium">{{ t('checkout.gopay') }}</span>
+                    </div>
+                    <p class="text-xs text-muted-foreground mt-1">{{ t('checkout.gopay_desc') }}</p>
+                  </div>
+                </label>
+                <label
+                  class="flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-colors"
+                  :class="form.payment_method === 'cash_on_delivery' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground/30'"
+                >
+                  <input
+                    v-model="form.payment_method"
+                    type="radio"
+                    name="payment_method"
+                    value="cash_on_delivery"
+                    class="mt-0.5 accent-primary"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                      <BanknoteIcon class="w-4 h-4 text-muted-foreground" />
+                      <span class="text-sm font-medium">{{ t('checkout.cash_on_delivery') }}</span>
+                    </div>
+                    <p class="text-xs text-muted-foreground mt-1">{{ t('checkout.cash_on_delivery_desc') }}</p>
+                  </div>
+                </label>
+              </div>
+              <p v-if="form.errors.payment_method" class="text-destructive text-sm mt-2">{{ form.errors.payment_method }}</p>
+            </div>
+
             <button
               type="submit"
               :disabled="form.processing"
@@ -137,14 +183,16 @@
 <script setup>
 import { computed } from 'vue'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
-import { ArrowLeft as ArrowLeftIcon } from 'lucide-vue-next'
+import { ArrowLeft as ArrowLeftIcon, CreditCard as CreditCardIcon, Banknote as BanknoteIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import { useTranslation } from '@/composables/useTranslation'
 import { useLocale } from '@/composables/useLocale'
+import { useRecaptcha } from '@/composables/useRecaptcha'
 
 const { t } = useTranslation()
 const { localizedUrl } = useLocale()
+const { execute: executeRecaptcha } = useRecaptcha()
 
 const props = defineProps({
   items: Array,
@@ -161,9 +209,12 @@ const form = useForm({
   customer_phone: props.customer?.phone ?? '',
   shipping_address: props.customer?.address ?? '',
   notes: '',
+  payment_method: 'gopay',
+  recaptcha_token: '',
 })
 
-function submitOrder() {
+async function submitOrder() {
+  form.recaptcha_token = await executeRecaptcha('checkout')
   form.post(localizedUrl('/checkout'))
 }
 </script>

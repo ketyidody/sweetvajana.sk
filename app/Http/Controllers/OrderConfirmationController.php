@@ -32,6 +32,8 @@ class OrderConfirmationController extends Controller
                 'shipping' => $order->shipping,
                 'total' => $order->total,
                 'status' => $order->status,
+                'payment_method' => $order->payment_method,
+                'payment_status' => $order->payment_status,
                 'notes' => $order->notes,
                 'items' => $order->items->map(fn ($item) => [
                     'product_name' => $item->product_name,

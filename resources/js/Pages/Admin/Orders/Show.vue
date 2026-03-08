@@ -88,6 +88,21 @@
           </form>
         </div>
 
+        <!-- Payment info (for GoPay orders) -->
+        <div v-if="order.payment_method === 'gopay'" class="bg-card rounded-lg border border-border p-4">
+          <h2 class="font-medium mb-3">Payment</h2>
+          <dl class="text-sm space-y-2">
+            <div>
+              <dt class="text-muted-foreground">Method</dt>
+              <dd>Online Payment (GoPay)</dd>
+            </div>
+            <div v-if="order.gopay_payment_id">
+              <dt class="text-muted-foreground">GoPay Payment ID</dt>
+              <dd class="font-mono text-xs">{{ order.gopay_payment_id }}</dd>
+            </div>
+          </dl>
+        </div>
+
         <!-- Customer info -->
         <div class="bg-card rounded-lg border border-border p-4">
           <h2 class="font-medium mb-3">Customer</h2>

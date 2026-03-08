@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
+            'recaptchaSiteKey' => config('services.recaptcha.site_key'),
             'locale' => fn () => app()->getLocale(),
             'defaultLocale' => fn () => Language::getDefault()?->code ?? 'sk',
             'languages' => fn () => Schema::hasTable('languages')

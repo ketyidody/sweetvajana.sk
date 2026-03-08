@@ -40,4 +40,11 @@ return [
         ],
     ],
 
+    'gopay' => [
+        'goid' => env('GOPAY_GOID'),
+        'client_id' => env('GOPAY_CLIENT_ID'),
+        'client_secret' => env('GOPAY_CLIENT_SECRET'),
+        'is_production' => env('GOPAY_IS_PRODUCTION', false),
+    ],
+
 ];

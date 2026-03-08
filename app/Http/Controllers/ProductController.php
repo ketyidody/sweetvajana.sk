@@ -30,6 +30,7 @@ class ProductController extends Controller
                 'images' => $allImages,
                 'category' => $product->category->translated('name'),
                 'category_slug' => $product->category->slug,
+                'is_orderable_online' => $product->is_orderable_online,
             ],
         ]);
     }
@@ -66,6 +67,7 @@ class ProductController extends Controller
                 'image' => $product->image,
                 'stock' => $product->stock,
                 'category' => $product->category->translated('name'),
+                'is_orderable_online' => $product->is_orderable_online,
             ]);
 
         $categories = Category::withTranslations()

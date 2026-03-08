@@ -22,7 +22,7 @@ class PageSeeder extends Seeder
             ['slug' => 'terms-and-conditions'],
             [
                 'title' => 'Terms and Conditions',
-                'content' => "These are the general terms and conditions of Sweet Vajana. Please update this content via the admin panel.",
+                'content' => 'These are the general terms and conditions of Sweet Vajana. Please update this content via the admin panel.',
                 'is_active' => true,
             ]
         );

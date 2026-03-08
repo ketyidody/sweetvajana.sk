@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\GoPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -134,7 +137,7 @@ class CheckoutController extends Controller
                 'shipping' => 0,
                 'total' => $subtotal,
                 'status' => 'pending',
-                'payment_method' => 'cash_on_delivery',
+                'payment_method' => $request->payment_method,
                 'payment_status' => 'pending',
                 'notes' => $request->notes,
             ]);
@@ -151,6 +154,38 @@ class CheckoutController extends Controller
         }
 
         $request->session()->forget('cart');
+
+        if ($order->payment_method === 'gopay') {
+            return $this->handleGoPayPayment($request, $order);
+        }
+
+        $request->session()->put('last_order_id', $order->id);
+
+        return redirect()->route('orders.confirmation', $order);
+    }
+
+    private function handleGoPayPayment(Request $request, Order $order)
+    {
+        $goPayService = app(GoPayService::class);
+
+        $returnUrl = URL::signedRoute('gopay.return', ['order_id' => $order->id]);
+        $notifyUrl = route('gopay.notify');
+
+        $order->load('items');
+        $response = $goPayService->createPayment($order, $returnUrl, $notifyUrl);
+
+        if ($response->hasSucceed()) {
+            $order->update(['gopay_payment_id' => (string) $response->json['id']]);
+
+            return Inertia::location($response->json['gw_url']);
+        }
+
+        Log::error('GoPay payment creation failed', [
+            'order_id' => $order->id,
+            'status_code' => $response->statusCode,
+            'response' => $response->json,
+        ]);
+
         $request->session()->put('last_order_id', $order->id);
 
         return redirect()->route('orders.confirmation', $order);

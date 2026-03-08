@@ -22,15 +22,25 @@
         <span class="inline-block px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs">
           {{ product.category }}
         </span>
+        <template v-if="product.is_orderable_online">
+          <button
+            v-if="product.stock > 0"
+            class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-medium hover:bg-primary/90 transition-colors"
+            @click.stop="addToCart"
+          >
+            <ShoppingCartIcon class="w-3.5 h-3.5" />
+            {{ t('common.add_to_cart') }}
+          </button>
+          <span v-else class="text-xs text-muted-foreground">{{ t('product.out_of_stock') }}</span>
+        </template>
         <button
-          v-if="product.stock > 0"
-          class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-medium hover:bg-primary/90 transition-colors"
-          @click.stop="addToCart"
+          v-else
+          class="inline-flex items-center gap-1 px-3 py-1.5 bg-secondary text-secondary-foreground rounded-md text-xs font-medium hover:bg-secondary/80 transition-colors"
+          @click.stop="router.visit(localizedUrl('/products/' + product.slug))"
         >
-          <ShoppingCartIcon class="w-3.5 h-3.5" />
-          {{ t('common.add_to_cart') }}
+          <PenLineIcon class="w-3.5 h-3.5" />
+          {{ t('product.personalize') }}
         </button>
-        <span v-else class="text-xs text-muted-foreground">{{ t('product.out_of_stock') }}</span>
       </div>
     </div>
   </div>
@@ -38,7 +48,7 @@
 
 <script setup>
 import { router } from '@inertiajs/vue3'
-import { ShoppingCart as ShoppingCartIcon } from 'lucide-vue-next'
+import { ShoppingCart as ShoppingCartIcon, PenLine as PenLineIcon } from 'lucide-vue-next'
 import { useTranslation } from '@/composables/useTranslation'
 import { useLocale } from '@/composables/useLocale'
 

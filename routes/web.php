@@ -11,16 +11,19 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminSpecialOrderController;
 use App\Http\Controllers\Admin\AdminTranslationController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\GoPayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderConfirmationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SpecialOrderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -46,6 +49,9 @@ $publicRoutes = function () {
 
     // Order confirmation
     Route::get('/orders/{order}/confirmation', [OrderConfirmationController::class, 'show'])->name('orders.confirmation');
+
+    // Special orders
+    Route::post('/special-order', [SpecialOrderController::class, 'store'])->name('special-order.store');
 };
 
 // 1. Default locale (no prefix)
@@ -56,6 +62,10 @@ Route::prefix('{locale}')
     ->where(['locale' => '[a-z]{2}'])
     ->middleware('set-locale')
     ->group($publicRoutes);
+
+// GoPay callback routes (outside locale groups)
+Route::get('/gopay/return', [GoPayController::class, 'return'])->name('gopay.return');
+Route::match(['get', 'post'], '/gopay/notify', [GoPayController::class, 'notify'])->name('gopay.notify');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -92,6 +102,11 @@ Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name(
     Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
     Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+    Route::get('special-orders', [AdminSpecialOrderController::class, 'index'])->name('special-orders.index');
+    Route::get('special-orders/{specialOrder}', [AdminSpecialOrderController::class, 'show'])->name('special-orders.show');
+    Route::patch('special-orders/{specialOrder}', [AdminSpecialOrderController::class, 'update'])->name('special-orders.update');
+    Route::delete('special-orders/{specialOrder}', [AdminSpecialOrderController::class, 'destroy'])->name('special-orders.destroy');
 
     Route::resource('languages', AdminLanguageController::class)->except('show');
     Route::get('translations', [AdminTranslationController::class, 'index'])->name('translations.index');

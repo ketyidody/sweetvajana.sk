@@ -24,6 +24,7 @@ class HomeController extends Controller
                 'image' => $product->image,
                 'stock' => $product->stock,
                 'category' => $product->category->translated('name'),
+                'is_orderable_online' => $product->is_orderable_online,
             ]);
 
         return Inertia::render('Welcome', [

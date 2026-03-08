@@ -23,6 +23,7 @@ class Order extends Model
         'status',
         'payment_method',
         'payment_status',
+        'gopay_payment_id',
         'notes',
     ];
 

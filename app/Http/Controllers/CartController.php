@@ -58,6 +58,7 @@ class CartController extends Controller
 
         $product = Product::where('id', $request->product_id)
             ->where('is_active', true)
+            ->where('is_orderable_online', true)
             ->firstOrFail();
 
         $cart = $request->session()->get('cart', []);

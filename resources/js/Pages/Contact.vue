@@ -137,20 +137,18 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { Head, router, usePage, useForm } from '@inertiajs/vue3'
 import { Phone as PhoneIcon, Mail as MailIcon, Instagram as InstagramIcon, Facebook as FacebookIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import { useTranslation } from '@/composables/useTranslation'
 import { useLocale } from '@/composables/useLocale'
+import { useRecaptcha } from '@/composables/useRecaptcha'
 
 const { t } = useTranslation()
 const { localizedUrl } = useLocale()
-
-const props = defineProps({
-  recaptchaSiteKey: String,
-})
+const { execute: executeRecaptcha } = useRecaptcha()
 
 const cartItemsCount = computed(() => usePage().props.cartItemsCount)
 const settings = computed(() => usePage().props.site_settings || {})
@@ -163,25 +161,8 @@ const form = useForm({
   recaptcha_token: '',
 })
 
-onMounted(() => {
-  if (props.recaptchaSiteKey) {
-    const script = document.createElement('script')
-    script.src = `https://www.google.com/recaptcha/api.js?render=${props.recaptchaSiteKey}`
-    document.head.appendChild(script)
-  }
-})
-
-function submit() {
-  if (!props.recaptchaSiteKey) {
-    form.post(localizedUrl('/contact'), { onSuccess: () => form.reset() })
-    return
-  }
-
-  window.grecaptcha.ready(() => {
-    window.grecaptcha.execute(props.recaptchaSiteKey, { action: 'contact' }).then((token) => {
-      form.recaptcha_token = token
-      form.post(localizedUrl('/contact'), { onSuccess: () => form.reset() })
-    })
-  })
+async function submit() {
+  form.recaptcha_token = await executeRecaptcha('contact')
+  form.post(localizedUrl('/contact'), { onSuccess: () => form.reset() })
 }
 </script>

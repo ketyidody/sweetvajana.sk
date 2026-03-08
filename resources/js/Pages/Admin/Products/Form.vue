@@ -120,6 +120,10 @@
               <input v-model="form.is_featured" type="checkbox" id="is_featured" class="rounded" />
               <label for="is_featured" class="text-sm">Featured</label>
             </div>
+            <div class="flex items-center gap-2">
+              <input v-model="form.is_orderable_online" type="checkbox" id="is_orderable_online" class="rounded" />
+              <label for="is_orderable_online" class="text-sm">Available for online order</label>
+            </div>
           </div>
         </template>
 
@@ -228,6 +232,7 @@ const form = useForm({
   existing_images: [],
   is_active: props.product?.is_active ?? true,
   is_featured: props.product?.is_featured ?? false,
+  is_orderable_online: props.product?.is_orderable_online ?? true,
   translations: translationsData,
 })
 

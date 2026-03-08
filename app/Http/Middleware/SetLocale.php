@@ -30,6 +30,7 @@ class SetLocale
 
             app()->setLocale($locale);
             URL::defaults(['locale' => $locale]);
+            $request->route()->forgetParameter('locale');
         } else {
             if ($request->user()?->locale && in_array($request->user()->locale, $activeCodes)) {
                 app()->setLocale($request->user()->locale);

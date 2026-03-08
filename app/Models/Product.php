@@ -21,6 +21,7 @@ class Product extends Model
         'images',
         'is_active',
         'is_featured',
+        'is_orderable_online',
     ];
 
     protected $casts = [
@@ -28,6 +29,7 @@ class Product extends Model
         'images' => 'array',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'is_orderable_online' => 'boolean',
     ];
 
     public function category(): BelongsTo

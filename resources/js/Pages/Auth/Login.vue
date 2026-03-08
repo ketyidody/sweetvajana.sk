@@ -6,6 +6,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { useRecaptcha } from '@/composables/useRecaptcha';
+
+const { execute: executeRecaptcha } = useRecaptcha();
 
 defineProps({
     canResetPassword: {
@@ -20,9 +23,11 @@ const form = useForm({
     email: '',
     password: '',
     remember: false,
+    recaptcha_token: '',
 });
 
-const submit = () => {
+const submit = async () => {
+    form.recaptcha_token = await executeRecaptcha('login');
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
     });
