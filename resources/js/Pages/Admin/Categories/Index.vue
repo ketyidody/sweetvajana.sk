@@ -29,7 +29,12 @@
                   <ImageIcon class="w-4 h-4 text-muted-foreground" />
                 </div>
               </td>
-              <td class="p-3 font-medium">{{ category.name }}</td>
+              <td class="p-3 font-medium">
+                <div class="flex items-center" :style="{ paddingLeft: (category.depth || 0) * 24 + 'px' }">
+                  <CornerDownRightIcon v-if="category.depth > 0" class="w-4 h-4 text-muted-foreground mr-2 flex-shrink-0" />
+                  {{ category.name }}
+                </div>
+              </td>
               <td class="p-3">{{ category.products_count }}</td>
               <td class="p-3">
                 <span :class="category.is_active ? 'text-green-600' : 'text-red-600'" class="text-xs">
@@ -60,12 +65,13 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
-import { Plus as PlusIcon, Pencil as PencilIcon, Trash2 as TrashIcon, Image as ImageIcon } from 'lucide-vue-next'
+import { Plus as PlusIcon, Pencil as PencilIcon, Trash2 as TrashIcon, Image as ImageIcon, CornerDownRight as CornerDownRightIcon } from 'lucide-vue-next'
 
 defineProps({ categories: Array })
 
 function deleteCategory(category) {
-  if (confirm(`Delete "${category.name}"?`)) {
+  const msg = `Delete "${category.name}"? Its subcategories will be moved to its parent.`
+  if (confirm(msg)) {
     router.delete(`/admin/categories/${category.id}`)
   }
 }

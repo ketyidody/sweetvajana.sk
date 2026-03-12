@@ -37,7 +37,9 @@
             <label class="block text-sm font-medium mb-1">Category</label>
             <select v-model="form.category_id" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm">
               <option value="">Select category</option>
-              <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                {{ '\u00A0'.repeat((cat.depth || 0) * 4) }}{{ cat.depth > 0 ? '\u2514 ' : '' }}{{ cat.name }}
+              </option>
             </select>
             <p v-if="form.errors.category_id" class="text-destructive text-xs mt-1">{{ form.errors.category_id }}</p>
           </div>

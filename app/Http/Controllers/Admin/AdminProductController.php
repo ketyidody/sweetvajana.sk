@@ -24,7 +24,7 @@ class AdminProductController extends Controller
     public function create()
     {
         return Inertia::render('Admin/Products/Form', [
-            'categories' => Category::where('is_active', true)->get(),
+            'categories' => Category::getTree()->filter(fn ($c) => $c->is_active)->values(),
             'languages' => Language::getActive(),
             'defaultLocale' => Language::getDefault()?->code ?? 'sk',
         ]);
@@ -87,7 +87,7 @@ class AdminProductController extends Controller
 
         return Inertia::render('Admin/Products/Form', [
             'product' => $product,
-            'categories' => Category::where('is_active', true)->get(),
+            'categories' => Category::getTree()->filter(fn ($c) => $c->is_active)->values(),
             'productTranslations' => $translationData,
             'languages' => Language::getActive(),
             'defaultLocale' => Language::getDefault()?->code ?? 'sk',

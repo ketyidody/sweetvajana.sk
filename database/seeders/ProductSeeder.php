@@ -8,49 +8,128 @@ use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Create categories
-        $categories = [
-            [
-                'name' => 'Cakes',
-                'slug' => 'cakes',
-                'description' => 'Delicious handcrafted cakes for all occasions',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Cupcakes',
-                'slug' => 'cupcakes',
-                'description' => 'Individual portion cupcakes with gourmet frosting',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Pastries',
-                'slug' => 'pastries',
-                'description' => 'French-inspired pastries and sweet treats',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Desserts',
-                'slug' => 'desserts',
-                'description' => 'Classic desserts made with premium ingredients',
-                'is_active' => true,
-            ],
-        ];
-
-        foreach ($categories as $categoryData) {
-            Category::create($categoryData);
-        }
-
         $cakes = Category::where('slug', 'cakes')->first();
         $cupcakes = Category::where('slug', 'cupcakes')->first();
         $pastries = Category::where('slug', 'pastries')->first();
         $desserts = Category::where('slug', 'desserts')->first();
 
+        // Subcategories under Cakes
+        $redCakes = Category::where('slug', 'red-cakes')->first();
+        $blueCakes = Category::where('slug', 'blue-cakes')->first();
+        $greenCakes = Category::where('slug', 'green-cakes')->first();
+        $pinkCakes = Category::where('slug', 'pink-cakes')->first();
+
         $products = [
+            // Red Cakes subcategory
+            [
+                'category_id' => $redCakes->id,
+                'name' => 'Red Cake',
+                'slug' => 'red-cake',
+                'description' => 'A bold red velvet cake with rich cream cheese frosting. A timeless favorite with stunning color.',
+                'price' => 40.00,
+                'stock' => 10,
+                'image' => '/images/products/red-cake.svg',
+                'is_active' => true,
+                'is_featured' => true,
+            ],
+            [
+                'category_id' => $redCakes->id,
+                'name' => 'Burgundy Cake',
+                'slug' => 'burgundy-cake',
+                'description' => 'A rich burgundy cake with red wine reduction and dark chocolate ganache. Decadent and refined.',
+                'price' => 50.00,
+                'stock' => 6,
+                'image' => '/images/products/burgundy-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+            [
+                'category_id' => $redCakes->id,
+                'name' => 'Ruby Cake',
+                'slug' => 'ruby-cake',
+                'description' => 'A dazzling ruby cake with raspberry coulis and white chocolate mousse. Jewel-toned and luxurious.',
+                'price' => 48.00,
+                'stock' => 6,
+                'image' => '/images/products/ruby-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+
+            // Blue Cakes subcategory
+            [
+                'category_id' => $blueCakes->id,
+                'name' => 'Blue Cake',
+                'slug' => 'blue-cake',
+                'description' => 'A dreamy blue cake with vanilla bean flavor and buttercream frosting. Perfect for celebrations.',
+                'price' => 38.00,
+                'stock' => 10,
+                'image' => '/images/products/blue-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+            [
+                'category_id' => $blueCakes->id,
+                'name' => 'Cyan Cake',
+                'slug' => 'cyan-cake',
+                'description' => 'A bright cyan cake with blue curaçao and citrus notes. Eye-catching and refreshingly sweet.',
+                'price' => 40.00,
+                'stock' => 10,
+                'image' => '/images/products/cyan-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+
+            // Green Cakes subcategory
+            [
+                'category_id' => $greenCakes->id,
+                'name' => 'Green Cake',
+                'slug' => 'green-cake',
+                'description' => 'A fresh green cake with matcha and white chocolate layers. Earthy, sweet, and full of flavor.',
+                'price' => 40.00,
+                'stock' => 10,
+                'image' => '/images/products/green-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+            [
+                'category_id' => $greenCakes->id,
+                'name' => 'Emerald Cake',
+                'slug' => 'emerald-cake',
+                'description' => 'A lush emerald cake with matcha, white chocolate, and mint. Green, gorgeous, and gourmet.',
+                'price' => 46.00,
+                'stock' => 8,
+                'image' => '/images/products/emerald-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+
+            // Pink Cakes subcategory
+            [
+                'category_id' => $pinkCakes->id,
+                'name' => 'Pink Cake',
+                'slug' => 'pink-cake',
+                'description' => 'A delightful pink cake with strawberry-infused layers and creamy frosting. Sweet and charming.',
+                'price' => 38.00,
+                'stock' => 10,
+                'image' => '/images/products/pink-cake.svg',
+                'is_active' => true,
+                'is_featured' => true,
+            ],
+            [
+                'category_id' => $pinkCakes->id,
+                'name' => 'Magenta Cake',
+                'slug' => 'magenta-cake',
+                'description' => 'A vivid magenta cake with dragonfruit and passion fruit filling. Exotic, bold, and irresistible.',
+                'price' => 44.00,
+                'stock' => 8,
+                'image' => '/images/products/magenta-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+
+            // Remaining cakes stay in the parent Cakes category
             [
                 'category_id' => $cakes->id,
                 'name' => 'White Cake',
@@ -64,17 +143,6 @@ class ProductSeeder extends Seeder
             ],
             [
                 'category_id' => $cakes->id,
-                'name' => 'Pink Cake',
-                'slug' => 'pink-cake',
-                'description' => 'A delightful pink cake with strawberry-infused layers and creamy frosting. Sweet and charming.',
-                'price' => 38.00,
-                'stock' => 10,
-                'image' => '/images/products/pink-cake.svg',
-                'is_active' => true,
-                'is_featured' => true,
-            ],
-            [
-                'category_id' => $cakes->id,
                 'name' => 'Purple Cake',
                 'slug' => 'purple-cake',
                 'description' => 'A vibrant purple cake with blueberry and lavender notes. Uniquely flavored and beautifully presented.',
@@ -83,39 +151,6 @@ class ProductSeeder extends Seeder
                 'image' => '/images/products/purple-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Red Cake',
-                'slug' => 'red-cake',
-                'description' => 'A bold red velvet cake with rich cream cheese frosting. A timeless favorite with stunning color.',
-                'price' => 40.00,
-                'stock' => 10,
-                'image' => '/images/products/red-cake.svg',
-                'is_active' => true,
-                'is_featured' => true,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Blue Cake',
-                'slug' => 'blue-cake',
-                'description' => 'A dreamy blue cake with vanilla bean flavor and buttercream frosting. Perfect for celebrations.',
-                'price' => 38.00,
-                'stock' => 10,
-                'image' => '/images/products/blue-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Green Cake',
-                'slug' => 'green-cake',
-                'description' => 'A fresh green cake with matcha and white chocolate layers. Earthy, sweet, and full of flavor.',
-                'price' => 40.00,
-                'stock' => 10,
-                'image' => '/images/products/green-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
             ],
             [
                 'category_id' => $cakes->id,
@@ -139,6 +174,19 @@ class ProductSeeder extends Seeder
                 'is_active' => true,
                 'is_featured' => false,
             ],
+            [
+                'category_id' => $cakes->id,
+                'name' => 'Cream Cake',
+                'slug' => 'cream-cake',
+                'description' => 'A delicate cream cake with Bavarian cream and vanilla wafer crumble. Light, airy, and elegant.',
+                'price' => 36.00,
+                'stock' => 10,
+                'image' => '/images/products/cream-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+
+            // Cupcakes category
             [
                 'category_id' => $cupcakes->id,
                 'name' => 'Lavender Cake',
@@ -184,6 +232,30 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
             ],
             [
+                'category_id' => $cupcakes->id,
+                'name' => 'Navy Cake',
+                'slug' => 'navy-cake',
+                'description' => 'A deep navy cake with blueberry jam and mascarpone cream. Sophisticated and berry-forward.',
+                'price' => 43.00,
+                'stock' => 8,
+                'image' => '/images/products/navy-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+            [
+                'category_id' => $cupcakes->id,
+                'name' => 'Olive Cake',
+                'slug' => 'olive-cake',
+                'description' => 'A unique olive cake with pistachio and lemon. Earthy, nutty, and surprisingly delightful.',
+                'price' => 39.00,
+                'stock' => 10,
+                'image' => '/images/products/olive-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+
+            // Pastries category
+            [
                 'category_id' => $pastries->id,
                 'name' => 'Teal Cake',
                 'slug' => 'teal-cake',
@@ -227,6 +299,30 @@ class ProductSeeder extends Seeder
                 'is_active' => true,
                 'is_featured' => false,
             ],
+            [
+                'category_id' => $pastries->id,
+                'name' => 'Plum Cake',
+                'slug' => 'plum-cake',
+                'description' => 'A fragrant plum cake with spiced plum compote and cinnamon cream. Warm and seasonal.',
+                'price' => 42.00,
+                'stock' => 8,
+                'image' => '/images/products/plum-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+            [
+                'category_id' => $pastries->id,
+                'name' => 'Salmon Cake',
+                'slug' => 'salmon-cake',
+                'description' => 'A soft salmon-colored cake with guava and cream cheese filling. Tropical elegance on a plate.',
+                'price' => 40.00,
+                'stock' => 10,
+                'image' => '/images/products/salmon-cake.svg',
+                'is_active' => true,
+                'is_featured' => false,
+            ],
+
+            // Desserts category
             [
                 'category_id' => $desserts->id,
                 'name' => 'Sky Cake',
@@ -272,83 +368,6 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
             ],
             [
-                'category_id' => $cakes->id,
-                'name' => 'Cyan Cake',
-                'slug' => 'cyan-cake',
-                'description' => 'A bright cyan cake with blue curaçao and citrus notes. Eye-catching and refreshingly sweet.',
-                'price' => 40.00,
-                'stock' => 10,
-                'image' => '/images/products/cyan-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Magenta Cake',
-                'slug' => 'magenta-cake',
-                'description' => 'A vivid magenta cake with dragonfruit and passion fruit filling. Exotic, bold, and irresistible.',
-                'price' => 44.00,
-                'stock' => 8,
-                'image' => '/images/products/magenta-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Burgundy Cake',
-                'slug' => 'burgundy-cake',
-                'description' => 'A rich burgundy cake with red wine reduction and dark chocolate ganache. Decadent and refined.',
-                'price' => 50.00,
-                'stock' => 6,
-                'image' => '/images/products/burgundy-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $cupcakes->id,
-                'name' => 'Navy Cake',
-                'slug' => 'navy-cake',
-                'description' => 'A deep navy cake with blueberry jam and mascarpone cream. Sophisticated and berry-forward.',
-                'price' => 43.00,
-                'stock' => 8,
-                'image' => '/images/products/navy-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $cupcakes->id,
-                'name' => 'Olive Cake',
-                'slug' => 'olive-cake',
-                'description' => 'A unique olive cake with pistachio and lemon. Earthy, nutty, and surprisingly delightful.',
-                'price' => 39.00,
-                'stock' => 10,
-                'image' => '/images/products/olive-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $pastries->id,
-                'name' => 'Plum Cake',
-                'slug' => 'plum-cake',
-                'description' => 'A fragrant plum cake with spiced plum compote and cinnamon cream. Warm and seasonal.',
-                'price' => 42.00,
-                'stock' => 8,
-                'image' => '/images/products/plum-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $pastries->id,
-                'name' => 'Salmon Cake',
-                'slug' => 'salmon-cake',
-                'description' => 'A soft salmon-colored cake with guava and cream cheese filling. Tropical elegance on a plate.',
-                'price' => 40.00,
-                'stock' => 10,
-                'image' => '/images/products/salmon-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
                 'category_id' => $desserts->id,
                 'name' => 'Turquoise Cake',
                 'slug' => 'turquoise-cake',
@@ -369,39 +388,6 @@ class ProductSeeder extends Seeder
                 'image' => '/images/products/chocolate-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Cream Cake',
-                'slug' => 'cream-cake',
-                'description' => 'A delicate cream cake with Bavarian cream and vanilla wafer crumble. Light, airy, and elegant.',
-                'price' => 36.00,
-                'stock' => 10,
-                'image' => '/images/products/cream-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Ruby Cake',
-                'slug' => 'ruby-cake',
-                'description' => 'A dazzling ruby cake with raspberry coulis and white chocolate mousse. Jewel-toned and luxurious.',
-                'price' => 48.00,
-                'stock' => 6,
-                'image' => '/images/products/ruby-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
-            ],
-            [
-                'category_id' => $cakes->id,
-                'name' => 'Emerald Cake',
-                'slug' => 'emerald-cake',
-                'description' => 'A lush emerald cake with matcha, white chocolate, and mint. Green, gorgeous, and gourmet.',
-                'price' => 46.00,
-                'stock' => 8,
-                'image' => '/images/products/emerald-cake.svg',
-                'is_active' => true,
-                'is_featured' => false,
             ],
         ];
 

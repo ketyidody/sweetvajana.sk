@@ -42,9 +42,11 @@ class ProductController extends Controller
             ->where('is_active', true);
 
         if ($request->filled('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
-            });
+            $category = Category::where('slug', $request->category)->first();
+            if ($category) {
+                $categoryIds = $this->getCategoryAndDescendantIds($category->id);
+                $query->whereIn('category_id', $categoryIds);
+            }
         }
 
         if ($request->filled('min_price')) {
@@ -70,14 +72,16 @@ class ProductController extends Controller
                 'is_orderable_online' => $product->is_orderable_online,
             ]);
 
-        $categories = Category::withTranslations()
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get()
+        $tree = Category::getTree();
+        $tree->load('translations');
+        $categories = $tree
+            ->filter(fn ($c) => $c->is_active)
             ->map(fn ($cat) => [
                 'name' => $cat->translated('name'),
                 'slug' => $cat->slug,
-            ]);
+                'depth' => $cat->depth,
+            ])
+            ->values();
 
         return Inertia::render('Products/Index', [
             'products' => $products,
@@ -88,5 +92,17 @@ class ProductController extends Controller
                 'max_price' => $request->max_price,
             ],
         ]);
+    }
+
+    private function getCategoryAndDescendantIds(int $categoryId): array
+    {
+        $ids = [$categoryId];
+        $children = Category::where('parent_id', $categoryId)->pluck('id');
+
+        foreach ($children as $childId) {
+            $ids = array_merge($ids, $this->getCategoryAndDescendantIds($childId));
+        }
+
+        return $ids;
     }
 }

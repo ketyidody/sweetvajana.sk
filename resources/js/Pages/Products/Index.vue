@@ -27,6 +27,7 @@
                   <button
                     class="text-sm transition-colors"
                     :class="filters.category === category.slug ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'"
+                    :style="{ paddingLeft: (category.depth || 0) * 16 + 'px' }"
                     @click="applyFilter('category', category.slug)"
                   >
                     {{ category.name }}

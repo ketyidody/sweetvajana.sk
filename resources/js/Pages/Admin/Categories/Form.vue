@@ -34,6 +34,20 @@
         <!-- Default locale fields -->
         <template v-if="activeLocale === defaultLocale">
           <div>
+            <label class="block text-sm font-medium mb-1">Parent Category</label>
+            <select
+              v-model="form.parent_id"
+              class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+            >
+              <option :value="null">None (root category)</option>
+              <option v-for="cat in parentCategories" :key="cat.id" :value="cat.id">
+                {{ '\u00A0'.repeat(cat.depth * 4) }}{{ cat.depth > 0 ? '\u2514 ' : '' }}{{ cat.name }}
+              </option>
+            </select>
+            <p v-if="form.errors.parent_id" class="text-destructive text-xs mt-1">{{ form.errors.parent_id }}</p>
+          </div>
+
+          <div>
             <label class="block text-sm font-medium mb-1">Name</label>
             <input
               v-model="form.name"
@@ -129,6 +143,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 const props = defineProps({
   category: { type: Object, default: null },
   categoryTranslations: { type: Object, default: () => ({}) },
+  parentCategories: { type: Array, default: () => [] },
   languages: { type: Array, default: () => [] },
   defaultLocale: { type: String, default: 'sk' },
 })
@@ -165,6 +180,7 @@ const form = useForm({
   description: props.category?.description ?? '',
   image: null,
   is_active: props.category?.is_active ?? true,
+  parent_id: props.category?.parent_id ?? null,
   translations: translationsData,
 })
 
