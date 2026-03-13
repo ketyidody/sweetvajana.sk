@@ -131,6 +131,7 @@ class CheckoutController extends Controller
                 'payment_method' => $request->payment_method,
                 'payment_status' => 'pending',
                 'notes' => $request->notes,
+                'locale' => app()->getLocale(),
             ]);
 
             foreach ($items as $item) {

@@ -147,6 +147,14 @@ class TranslationSeeder extends Seeder
                 'submit' => ['sk' => 'Odoslat poziadavku', 'en' => 'Submit Request'],
                 'success' => ['sk' => 'Vasa poziadavka bola odoslana! Budeme vas kontaktovat.', 'en' => 'Your request has been submitted! We will contact you.'],
             ],
+            'email' => [
+                'invoice_subject' => ['sk' => 'Faktúra', 'en' => 'Invoice'],
+                'invoice_received' => ['sk' => 'Vaša objednávka bola prijatá. Faktúru nájdete v prílohe.', 'en' => 'Your order has been received. Please find your invoice attached.'],
+                'order_number' => ['sk' => 'Číslo objednávky', 'en' => 'Order number'],
+                'date' => ['sk' => 'Dátum', 'en' => 'Date'],
+                'total' => ['sk' => 'Celková suma', 'en' => 'Total'],
+                'thank_you' => ['sk' => 'Ďakujeme za vašu objednávku!', 'en' => 'Thank you for your order!'],
+            ],
             'messages' => [
                 'success_category_created' => ['sk' => 'Kategoria bola vytvorena.', 'en' => 'Category created.'],
                 'success_category_updated' => ['sk' => 'Kategoria bola aktualizovana.', 'en' => 'Category updated.'],

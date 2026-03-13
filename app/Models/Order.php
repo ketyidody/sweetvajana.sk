@@ -29,6 +29,7 @@ class Order extends Model
         'company_id',
         'vat_number',
         'invoice_path',
+        'locale',
     ];
 
     protected $casts = [

@@ -6,6 +6,7 @@ use App\Mail\InvoiceMail;
 use App\Mail\SellerNewOrderMail;
 use App\Models\Order;
 use App\Models\SiteSetting;
+use App\Models\Translation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -47,7 +48,11 @@ class InvoiceService
 
             $order->update(['invoice_path' => $invoicePath]);
 
-            Mail::to($order->customer_email)->send(new InvoiceMail($order, $invoicePath));
+            $customerLocale = $order->locale ?? config('app.fallback_locale', 'sk');
+            $this->loadDbTranslations($customerLocale);
+            Mail::to($order->customer_email)->send(
+                (new InvoiceMail($order, $invoicePath))->locale($customerLocale)
+            );
 
             $sellerEmail = SiteSetting::get('invoice_seller_email', config('invoice.seller_email'));
             if ($sellerEmail) {
@@ -59,5 +64,16 @@ class InvoiceService
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    private function loadDbTranslations(string $locale): void
+    {
+        $lines = [];
+        foreach (Translation::forLocale($locale) as $group => $keys) {
+            foreach ($keys as $key => $value) {
+                $lines["{$group}.{$key}"] = $value;
+            }
+        }
+        app('translator')->addLines($lines, $locale);
     }
 }
