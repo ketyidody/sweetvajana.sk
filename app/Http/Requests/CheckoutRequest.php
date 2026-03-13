@@ -20,7 +20,11 @@ class CheckoutRequest extends FormRequest
             'customer_phone' => 'required|string|max:50',
             'shipping_address' => 'required|string|max:1000',
             'notes' => 'nullable|string|max:2000',
-            'payment_method' => 'required|in:gopay,cash_on_delivery',
+            'billing_address' => 'nullable|string|max:1000',
+            'company_name' => 'nullable|string|max:255',
+            'company_id' => 'nullable|string|max:50',
+            'vat_number' => 'nullable|string|max:50',
+            'payment_method' => 'required|in:gopay',
             'recaptcha_token' => ['required', 'string', new Recaptcha],
         ];
     }

@@ -17,6 +17,17 @@
         >
           {{ t('product.all') }}
         </button>
+        <button
+          v-if="availableForCollectionCount > 0"
+          class="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-md transition-colors"
+          :class="filters.category === 'available-for-collection'
+            ? 'bg-primary text-primary-foreground'
+            : 'text-muted-foreground hover:text-foreground hover:bg-muted'"
+          @click="applyFilter('available-for-collection')"
+        >
+          <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+          {{ t('product.available_for_collection') }}
+        </button>
         <div
           v-for="cat in categoryTree"
           :key="cat.slug"
@@ -163,6 +174,7 @@ const { localizedUrl } = useLocale()
 const props = defineProps({
   products: Object,
   categories: Array,
+  availableForCollectionCount: Number,
   filters: Object,
 })
 

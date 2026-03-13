@@ -63,9 +63,10 @@
               <p v-if="form.errors.price" class="text-destructive text-xs mt-1">{{ form.errors.price }}</p>
             </div>
             <div>
-              <label class="block text-sm font-medium mb-1">Stock</label>
-              <input v-model="form.stock" type="number" min="0" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
-              <p v-if="form.errors.stock" class="text-destructive text-xs mt-1">{{ form.errors.stock }}</p>
+              <label class="block text-sm font-medium mb-1">Soonest availability (days)</label>
+              <input v-model="form.soonest_availability" type="number" min="1" max="365" placeholder="e.g. 3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              <p class="text-xs text-muted-foreground mt-1">Leave empty if not applicable.</p>
+              <p v-if="form.errors.soonest_availability" class="text-destructive text-xs mt-1">{{ form.errors.soonest_availability }}</p>
             </div>
           </div>
 
@@ -113,7 +114,7 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-6">
+          <div class="items-center gap-6">
             <div class="flex items-center gap-2">
               <input v-model="form.is_active" type="checkbox" id="is_active" class="rounded" />
               <label for="is_active" class="text-sm">Active</label>
@@ -125,6 +126,10 @@
             <div class="flex items-center gap-2">
               <input v-model="form.is_orderable_online" type="checkbox" id="is_orderable_online" class="rounded" />
               <label for="is_orderable_online" class="text-sm">Available for online order</label>
+            </div>
+            <div class="flex tems-center gap-2">
+              <input v-model="form.is_available_for_collection" type="checkbox" id="is_available_for_collection" class="rounded" />
+              <label for="is_available_for_collection" class="text-sm">Available for immediate collection</label>
             </div>
           </div>
         </template>
@@ -228,13 +233,14 @@ const form = useForm({
   name: props.product?.name ?? '',
   description: props.product?.description ?? '',
   price: props.product?.price ?? '',
-  stock: props.product?.stock ?? 0,
   image: null,
   additional_images: [],
   existing_images: [],
   is_active: props.product?.is_active ?? true,
   is_featured: props.product?.is_featured ?? false,
   is_orderable_online: props.product?.is_orderable_online ?? true,
+  is_available_for_collection: props.product?.is_available_for_collection ?? false,
+  soonest_availability: props.product?.soonest_availability ?? null,
   translations: translationsData,
 })
 

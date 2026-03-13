@@ -148,6 +148,48 @@
             </div>
           </div>
         </section>
+
+        <!-- Invoice / Seller Details -->
+        <section>
+          <h2 class="text-lg font-medium mb-4 pb-2 border-b border-border">Invoice / Seller Details</h2>
+          <p class="text-xs text-muted-foreground mb-4">These details appear on PDF invoices sent to customers.</p>
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Seller Name</label>
+                <input v-model="form.invoice_seller_name" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Seller Email</label>
+                <input v-model="form.invoice_seller_email" type="email" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Phone</label>
+                <input v-model="form.invoice_seller_phone" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Bank Account / IBAN</label>
+                <input v-model="form.invoice_seller_bank_account" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Address</label>
+              <textarea v-model="form.invoice_seller_address" rows="2" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Company ID (IČO)</label>
+                <input v-model="form.invoice_seller_company_id" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">VAT Number (DIČ / IČ DPH)</label>
+                <input v-model="form.invoice_seller_vat_number" type="text" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              </div>
+            </div>
+          </div>
+        </section>
       </template>
 
       <!-- Translation locale fields -->
@@ -311,6 +353,13 @@ const form = useForm({
   favicon: null,
   logo: null,
   translations: buildTranslationsData(),
+  invoice_seller_name: props.settings.invoice_seller_name ?? '',
+  invoice_seller_address: props.settings.invoice_seller_address ?? '',
+  invoice_seller_company_id: props.settings.invoice_seller_company_id ?? '',
+  invoice_seller_vat_number: props.settings.invoice_seller_vat_number ?? '',
+  invoice_seller_bank_account: props.settings.invoice_seller_bank_account ?? '',
+  invoice_seller_email: props.settings.invoice_seller_email ?? '',
+  invoice_seller_phone: props.settings.invoice_seller_phone ?? '',
 })
 
 function truncate(text, length = 50) {

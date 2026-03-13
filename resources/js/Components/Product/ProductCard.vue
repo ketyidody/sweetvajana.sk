@@ -11,6 +11,10 @@
       >
     </div>
     <div class="p-4">
+      <div v-if="product.is_available_for_collection" class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs font-medium mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+        {{ t('product.available_for_collection') }}
+      </div>
       <div class="flex items-start justify-between gap-2 mb-2">
         <h3 class="line-clamp-1">{{ product.name }}</h3>
         <span class="text-primary flex-shrink-0">€{{ product.price }}</span>
@@ -24,14 +28,12 @@
         </span>
         <template v-if="product.is_orderable_online">
           <button
-            v-if="product.stock > 0"
             class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-medium hover:bg-primary/90 transition-colors"
             @click.stop="addToCart"
           >
             <ShoppingCartIcon class="w-3.5 h-3.5" />
             {{ t('common.add_to_cart') }}
           </button>
-          <span v-else class="text-xs text-muted-foreground">{{ t('product.out_of_stock') }}</span>
         </template>
         <button
           v-else

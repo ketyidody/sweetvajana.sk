@@ -16,12 +16,13 @@ class Product extends Model
         'slug',
         'description',
         'price',
-        'stock',
         'image',
         'images',
         'is_active',
         'is_featured',
         'is_orderable_online',
+        'is_available_for_collection',
+        'soonest_availability',
     ];
 
     protected $casts = [
@@ -30,6 +31,7 @@ class Product extends Model
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
         'is_orderable_online' => 'boolean',
+        'is_available_for_collection' => 'boolean',
     ];
 
     public function category(): BelongsTo

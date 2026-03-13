@@ -13,6 +13,7 @@ class Page extends Model
         'title',
         'slug',
         'content',
+        'background_image',
         'is_active',
     ];
 

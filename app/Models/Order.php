@@ -25,6 +25,10 @@ class Order extends Model
         'payment_status',
         'gopay_payment_id',
         'notes',
+        'company_name',
+        'company_id',
+        'vat_number',
+        'invoice_path',
     ];
 
     protected $casts = [

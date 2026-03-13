@@ -79,50 +79,76 @@
               </div>
             </div>
 
+            <!-- Invoice Details -->
+            <div class="bg-card rounded-lg border border-border p-6">
+              <h2 class="text-lg font-medium mb-4">{{ t('checkout.invoice_details') }}</h2>
+
+              <!-- Company toggle -->
+              <label class="flex items-center gap-2 cursor-pointer mb-4">
+                <input v-model="invoiceForCompany" type="checkbox" class="rounded" />
+                <span class="text-sm">{{ t('checkout.invoice_for_company') }}</span>
+              </label>
+
+              <div v-if="invoiceForCompany" class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium mb-1">{{ t('checkout.company_name') }}</label>
+                  <input
+                    v-model="form.company_name"
+                    type="text"
+                    class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  />
+                  <p v-if="form.errors.company_name" class="text-destructive text-sm mt-1">{{ form.errors.company_name }}</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-1">{{ t('checkout.company_id') }} <span class="text-muted-foreground">({{ t('checkout.optional') }})</span></label>
+                    <input
+                      v-model="form.company_id"
+                      type="text"
+                      class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    />
+                    <p v-if="form.errors.company_id" class="text-destructive text-sm mt-1">{{ form.errors.company_id }}</p>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-1">{{ t('checkout.vat_number') }} <span class="text-muted-foreground">({{ t('checkout.optional') }})</span></label>
+                    <input
+                      v-model="form.vat_number"
+                      type="text"
+                      class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    />
+                    <p v-if="form.errors.vat_number" class="text-destructive text-sm mt-1">{{ form.errors.vat_number }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Billing address -->
+              <div class="mt-4">
+                <label class="flex items-center gap-2 cursor-pointer mb-3">
+                  <input v-model="billingSameAsShipping" type="checkbox" class="rounded" />
+                  <span class="text-sm">{{ t('checkout.billing_same_as_shipping') }}</span>
+                </label>
+                <div v-if="!billingSameAsShipping">
+                  <label class="block text-sm font-medium mb-1">{{ t('checkout.billing_address') }}</label>
+                  <textarea
+                    v-model="form.billing_address"
+                    rows="3"
+                    class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+                  ></textarea>
+                  <p v-if="form.errors.billing_address" class="text-destructive text-sm mt-1">{{ form.errors.billing_address }}</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Payment Method -->
             <div class="bg-card rounded-lg border border-border p-6">
               <h2 class="text-lg font-medium mb-4">{{ t('checkout.payment_method') }}</h2>
-              <div class="space-y-3">
-                <label
-                  class="flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-colors"
-                  :class="form.payment_method === 'gopay' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground/30'"
-                >
-                  <input
-                    v-model="form.payment_method"
-                    type="radio"
-                    name="payment_method"
-                    value="gopay"
-                    class="mt-0.5 accent-primary"
-                  />
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2">
-                      <CreditCardIcon class="w-4 h-4 text-muted-foreground" />
-                      <span class="text-sm font-medium">{{ t('checkout.gopay') }}</span>
-                    </div>
-                    <p class="text-xs text-muted-foreground mt-1">{{ t('checkout.gopay_desc') }}</p>
-                  </div>
-                </label>
-                <label
-                  class="flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-colors"
-                  :class="form.payment_method === 'cash_on_delivery' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground/30'"
-                >
-                  <input
-                    v-model="form.payment_method"
-                    type="radio"
-                    name="payment_method"
-                    value="cash_on_delivery"
-                    class="mt-0.5 accent-primary"
-                  />
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2">
-                      <BanknoteIcon class="w-4 h-4 text-muted-foreground" />
-                      <span class="text-sm font-medium">{{ t('checkout.cash_on_delivery') }}</span>
-                    </div>
-                    <p class="text-xs text-muted-foreground mt-1">{{ t('checkout.cash_on_delivery_desc') }}</p>
-                  </div>
-                </label>
+              <div class="flex items-start gap-3 p-3 border border-primary bg-primary/5 rounded-md">
+                <CreditCardIcon class="w-4 h-4 text-muted-foreground mt-0.5" />
+                <div class="flex-1">
+                  <span class="text-sm font-medium">{{ t('checkout.gopay') }}</span>
+                  <p class="text-xs text-muted-foreground mt-1">{{ t('checkout.gopay_desc') }}</p>
+                </div>
               </div>
-              <p v-if="form.errors.payment_method" class="text-destructive text-sm mt-2">{{ form.errors.payment_method }}</p>
             </div>
 
             <button
@@ -181,9 +207,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
-import { ArrowLeft as ArrowLeftIcon, CreditCard as CreditCardIcon, Banknote as BanknoteIcon } from 'lucide-vue-next'
+import { ArrowLeft as ArrowLeftIcon, CreditCard as CreditCardIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import { useTranslation } from '@/composables/useTranslation'
@@ -203,12 +229,19 @@ const props = defineProps({
 
 const cartItemsCount = computed(() => usePage().props.cartItemsCount)
 
+const invoiceForCompany = ref(false)
+const billingSameAsShipping = ref(true)
+
 const form = useForm({
   customer_name: props.customer?.name ?? '',
   customer_email: props.customer?.email ?? '',
   customer_phone: props.customer?.phone ?? '',
   shipping_address: props.customer?.address ?? '',
   notes: '',
+  billing_address: '',
+  company_name: '',
+  company_id: '',
+  vat_number: '',
   payment_method: 'gopay',
   recaptcha_token: '',
 })

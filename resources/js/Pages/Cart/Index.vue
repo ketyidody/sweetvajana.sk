@@ -39,8 +39,6 @@
                   </span>
                   <button
                     class="px-3 py-1 text-sm hover:bg-muted transition-colors"
-                    :disabled="item.quantity >= item.stock"
-                    :class="item.quantity >= item.stock ? 'opacity-50 cursor-not-allowed' : ''"
                     @click="updateQuantity(item.product_id, item.quantity + 1)"
                   >
                     <PlusIcon class="w-3 h-3" />

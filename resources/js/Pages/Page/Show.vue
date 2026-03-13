@@ -3,8 +3,12 @@
   <div class="min-h-screen flex flex-col bg-background">
     <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
 
-    <main class="flex-1">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-3xl">
+    <main
+      class="flex-1 relative"
+      :style="page.background_image ? { backgroundImage: `url(${page.background_image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+    >
+      <div v-if="page.background_image" class="absolute inset-0 bg-background/60" />
+      <div class="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-3xl">
         <h1 class="text-3xl font-medium mb-8">{{ page.title }}</h1>
         <div class="prose prose-neutral max-w-none text-foreground" v-html="renderedContent" />
       </div>

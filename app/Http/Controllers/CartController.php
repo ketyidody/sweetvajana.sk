@@ -24,7 +24,7 @@ class CartController extends Controller
             foreach ($cart as $productId => $cartItem) {
                 if ($products->has($productId)) {
                     $product = $products[$productId];
-                    $quantity = min($cartItem['quantity'], $product->stock);
+                    $quantity = $cartItem['quantity'];
                     $lineTotal = $product->price * $quantity;
                     $subtotal += $lineTotal;
 
@@ -34,7 +34,6 @@ class CartController extends Controller
                         'slug' => $product->slug,
                         'price' => $product->price,
                         'image' => $product->image,
-                        'stock' => $product->stock,
                         'quantity' => $quantity,
                         'subtotal' => number_format($lineTotal, 2, '.', ''),
                     ];
@@ -63,7 +62,7 @@ class CartController extends Controller
 
         $cart = $request->session()->get('cart', []);
         $currentQty = $cart[$product->id]['quantity'] ?? 0;
-        $newQty = min($currentQty + ($request->quantity ?? 1), $product->stock);
+        $newQty = $currentQty + ($request->quantity ?? 1);
 
         if ($newQty > 0) {
             $cart[$product->id] = ['quantity' => $newQty];
@@ -85,12 +84,8 @@ class CartController extends Controller
         if ($request->quantity <= 0) {
             unset($cart[$productId]);
         } else {
-            $product = Product::where('id', $productId)
-                ->where('is_active', true)
-                ->firstOrFail();
-
             $cart[$productId] = [
-                'quantity' => min($request->quantity, $product->stock),
+                'quantity' => $request->quantity,
             ];
         }
 

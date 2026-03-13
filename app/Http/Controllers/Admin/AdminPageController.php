@@ -7,6 +7,7 @@ use App\Models\Language;
 use App\Models\ModelTranslation;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -33,6 +34,7 @@ class AdminPageController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:pages,slug',
             'content' => 'nullable|string',
+            'background_image' => 'nullable|image|max:20480',
             'is_active' => 'boolean',
             'translations' => 'nullable|array',
             'translations.*.title' => 'nullable|string|max:255',
@@ -41,6 +43,12 @@ class AdminPageController extends Controller
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
+        }
+
+        if ($request->hasFile('background_image')) {
+            $validated['background_image'] = Storage::url(
+                $request->file('background_image')->store('pages', 'public')
+            );
         }
 
         $translations = $validated['translations'] ?? [];
@@ -64,7 +72,7 @@ class AdminPageController extends Controller
         }
 
         return Inertia::render('Admin/Pages/Form', [
-            'page' => $page,
+            'page' => $page->only('id', 'title', 'slug', 'content', 'background_image', 'is_active'),
             'pageTranslations' => $translationData,
             'languages' => Language::getActive(),
             'defaultLocale' => Language::getDefault()?->code ?? 'sk',
@@ -77,6 +85,8 @@ class AdminPageController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:pages,slug,'.$page->id,
             'content' => 'nullable|string',
+            'background_image' => 'nullable|image|max:20480',
+            'remove_background_image' => 'boolean',
             'is_active' => 'boolean',
             'translations' => 'nullable|array',
             'translations.*.title' => 'nullable|string|max:255',
@@ -86,6 +96,18 @@ class AdminPageController extends Controller
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
+
+        if ($request->hasFile('background_image')) {
+            $validated['background_image'] = Storage::url(
+                $request->file('background_image')->store('pages', 'public')
+            );
+        } elseif (! empty($validated['remove_background_image'])) {
+            $validated['background_image'] = null;
+        } else {
+            unset($validated['background_image']);
+        }
+
+        unset($validated['remove_background_image']);
 
         $translations = $validated['translations'] ?? [];
         unset($validated['translations']);

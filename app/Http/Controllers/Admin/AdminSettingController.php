@@ -51,6 +51,13 @@ class AdminSettingController extends Controller
             'translations' => 'nullable|array',
             'translations.*' => 'nullable|array',
             'translations.*.*' => 'nullable|string',
+            'invoice_seller_name' => 'nullable|string|max:255',
+            'invoice_seller_address' => 'nullable|string|max:500',
+            'invoice_seller_company_id' => 'nullable|string|max:100',
+            'invoice_seller_vat_number' => 'nullable|string|max:100',
+            'invoice_seller_bank_account' => 'nullable|string|max:255',
+            'invoice_seller_email' => 'nullable|email|max:255',
+            'invoice_seller_phone' => 'nullable|string|max:100',
         ]);
 
         $fileFields = ['hero_images', 'remove_hero_images', 'favicon', 'logo'];

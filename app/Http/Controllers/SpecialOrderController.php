@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SellerNewSpecialOrderMail;
 use App\Models\Product;
+use App\Models\SiteSetting;
 use App\Models\SpecialOrder;
 use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SpecialOrderController extends Controller
 {
@@ -25,7 +29,7 @@ class SpecialOrderController extends Controller
             ->where('is_orderable_online', false)
             ->firstOrFail();
 
-        SpecialOrder::create([
+        $specialOrder = SpecialOrder::create([
             'product_id' => $product->id,
             'product_name' => $product->name,
             'customer_name' => $validated['customer_name'],
@@ -33,6 +37,18 @@ class SpecialOrderController extends Controller
             'customer_phone' => $validated['customer_phone'],
             'message' => $validated['message'],
         ]);
+
+        $sellerEmail = SiteSetting::get('invoice_seller_email', config('invoice.seller_email'));
+        if ($sellerEmail) {
+            try {
+                Mail::to($sellerEmail)->send(new SellerNewSpecialOrderMail($specialOrder));
+            } catch (\Throwable $e) {
+                Log::error('Seller special order notification failed', [
+                    'special_order_id' => $specialOrder->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
 
         return back()->with('success', 'special_order.success');
     }

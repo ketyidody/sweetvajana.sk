@@ -25,12 +25,12 @@ class ProductController extends Controller
                 'slug' => $product->slug,
                 'description' => $product->translated('description'),
                 'price' => $product->price,
-                'stock' => $product->stock,
                 'image' => $product->image,
                 'images' => $allImages,
                 'category' => $product->category->translated('name'),
                 'category_slug' => $product->category->slug,
                 'is_orderable_online' => $product->is_orderable_online,
+                'soonest_availability' => $product->soonest_availability,
             ],
         ]);
     }
@@ -41,7 +41,9 @@ class ProductController extends Controller
             ->withTranslations()
             ->where('is_active', true);
 
-        if ($request->filled('category')) {
+        if ($request->category === 'available-for-collection') {
+            $query->where('is_available_for_collection', true);
+        } elseif ($request->filled('category')) {
             $category = Category::where('slug', $request->category)->first();
             if ($category) {
                 $categoryIds = $this->getCategoryAndDescendantIds($category->id);
@@ -59,9 +61,9 @@ class ProductController extends Controller
                 'description' => $product->translated('description'),
                 'price' => $product->price,
                 'image' => $product->image,
-                'stock' => $product->stock,
                 'category' => $product->category->translated('name'),
                 'is_orderable_online' => $product->is_orderable_online,
+                'is_available_for_collection' => $product->is_available_for_collection,
             ]);
 
         $tree = Category::getTree();
@@ -75,9 +77,14 @@ class ProductController extends Controller
             ])
             ->values();
 
+        $availableForCollectionCount = Product::where('is_active', true)
+            ->where('is_available_for_collection', true)
+            ->count();
+
         return Inertia::render('Products/Index', [
             'products' => $products,
             'categories' => $categories,
+            'availableForCollectionCount' => $availableForCollectionCount,
             'filters' => [
                 'category' => $request->category,
             ],

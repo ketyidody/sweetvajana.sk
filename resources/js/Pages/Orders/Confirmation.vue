@@ -79,7 +79,7 @@
             <p v-if="order.notes"><span class="text-muted-foreground">{{ t('order.notes') }}</span> {{ order.notes }}</p>
             <p>
               <span class="text-muted-foreground">{{ t('order.payment_method') }}</span>
-              {{ order.payment_method === 'gopay' ? t('order.method_gopay') : t('order.method_cash_on_delivery') }}
+              {{ t('order.method_gopay') }}
             </p>
             <p v-if="order.payment_method === 'gopay'">
               <span class="text-muted-foreground">{{ t('order.payment_status') }}</span>

@@ -18,9 +18,9 @@
               <th class="p-3 font-medium text-muted-foreground">Name</th>
               <th class="p-3 font-medium text-muted-foreground">Category</th>
               <th class="p-3 font-medium text-muted-foreground">Price</th>
-              <th class="p-3 font-medium text-muted-foreground">Stock</th>
               <th class="p-3 font-medium text-muted-foreground">Active</th>
               <th class="p-3 font-medium text-muted-foreground">Featured</th>
+              <th class="p-3 font-medium text-muted-foreground">Collection</th>
               <th class="p-3 font-medium text-muted-foreground">Actions</th>
             </tr>
           </thead>
@@ -35,7 +35,6 @@
               <td class="p-3 font-medium">{{ product.name }}</td>
               <td class="p-3 text-muted-foreground">{{ product.category?.name }}</td>
               <td class="p-3">€{{ product.price }}</td>
-              <td class="p-3">{{ product.stock }}</td>
               <td class="p-3">
                 <span :class="product.is_active ? 'text-green-600' : 'text-red-600'" class="text-xs">
                   {{ product.is_active ? 'Yes' : 'No' }}
@@ -43,6 +42,9 @@
               </td>
               <td class="p-3">
                 <span v-if="product.is_featured" class="text-yellow-600 text-xs">Featured</span>
+              </td>
+              <td class="p-3">
+                <span v-if="product.is_available_for_collection" class="text-green-600 text-xs">Yes</span>
               </td>
               <td class="p-3">
                 <div class="flex items-center gap-2">

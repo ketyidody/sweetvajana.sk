@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Services\GoPayService;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class GoPayController extends Controller
 {
-    public function __construct(private GoPayService $goPayService) {}
+    public function __construct(
+        private GoPayService $goPayService,
+        private InvoiceService $invoiceService,
+    ) {}
 
     public function return(Request $request)
     {
@@ -29,6 +33,11 @@ class GoPayController extends Controller
 
                 if ($order->payment_status !== $newStatus) {
                     $order->update(['payment_status' => $newStatus]);
+                    $order->refresh();
+                }
+
+                if ($order->payment_status === 'paid') {
+                    $this->invoiceService->generateAndSend($order);
                 }
             }
         }
@@ -59,6 +68,11 @@ class GoPayController extends Controller
 
             if ($order->payment_status !== $newStatus) {
                 $order->update(['payment_status' => $newStatus]);
+                $order->refresh();
+            }
+
+            if ($order->payment_status === 'paid') {
+                $this->invoiceService->generateAndSend($order);
             }
         } else {
             Log::error('GoPay notify: status check failed', [

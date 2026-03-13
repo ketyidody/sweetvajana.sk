@@ -29,7 +29,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'red-cake',
                 'description' => 'A bold red velvet cake with rich cream cheese frosting. A timeless favorite with stunning color.',
                 'price' => 40.00,
-                'stock' => 10,
+
                 'image' => '/images/products/red-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,
@@ -40,7 +40,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'burgundy-cake',
                 'description' => 'A rich burgundy cake with red wine reduction and dark chocolate ganache. Decadent and refined.',
                 'price' => 50.00,
-                'stock' => 6,
+
                 'image' => '/images/products/burgundy-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -51,7 +51,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'ruby-cake',
                 'description' => 'A dazzling ruby cake with raspberry coulis and white chocolate mousse. Jewel-toned and luxurious.',
                 'price' => 48.00,
-                'stock' => 6,
+
                 'image' => '/images/products/ruby-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -64,7 +64,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'blue-cake',
                 'description' => 'A dreamy blue cake with vanilla bean flavor and buttercream frosting. Perfect for celebrations.',
                 'price' => 38.00,
-                'stock' => 10,
+
                 'image' => '/images/products/blue-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -75,7 +75,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'cyan-cake',
                 'description' => 'A bright cyan cake with blue curaçao and citrus notes. Eye-catching and refreshingly sweet.',
                 'price' => 40.00,
-                'stock' => 10,
+
                 'image' => '/images/products/cyan-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -88,7 +88,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'green-cake',
                 'description' => 'A fresh green cake with matcha and white chocolate layers. Earthy, sweet, and full of flavor.',
                 'price' => 40.00,
-                'stock' => 10,
+
                 'image' => '/images/products/green-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -99,7 +99,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'emerald-cake',
                 'description' => 'A lush emerald cake with matcha, white chocolate, and mint. Green, gorgeous, and gourmet.',
                 'price' => 46.00,
-                'stock' => 8,
+
                 'image' => '/images/products/emerald-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -112,7 +112,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'pink-cake',
                 'description' => 'A delightful pink cake with strawberry-infused layers and creamy frosting. Sweet and charming.',
                 'price' => 38.00,
-                'stock' => 10,
+
                 'image' => '/images/products/pink-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,
@@ -123,7 +123,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'magenta-cake',
                 'description' => 'A vivid magenta cake with dragonfruit and passion fruit filling. Exotic, bold, and irresistible.',
                 'price' => 44.00,
-                'stock' => 8,
+
                 'image' => '/images/products/magenta-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -136,7 +136,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'white-cake',
                 'description' => 'A classic white cake with smooth vanilla frosting. Simple, elegant, and perfect for any occasion.',
                 'price' => 35.00,
-                'stock' => 10,
+
                 'image' => '/images/products/white-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,
@@ -147,7 +147,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'purple-cake',
                 'description' => 'A vibrant purple cake with blueberry and lavender notes. Uniquely flavored and beautifully presented.',
                 'price' => 42.00,
-                'stock' => 10,
+
                 'image' => '/images/products/purple-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,
@@ -158,7 +158,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'yellow-cake',
                 'description' => 'A sunny yellow cake with lemon curd filling and vanilla buttercream. Bright, zesty, and joyful.',
                 'price' => 36.00,
-                'stock' => 10,
+
                 'image' => '/images/products/yellow-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -169,7 +169,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'orange-cake',
                 'description' => 'A citrusy orange cake with tangerine glaze and cream cheese frosting. Refreshing and aromatic.',
                 'price' => 37.00,
-                'stock' => 10,
+
                 'image' => '/images/products/orange-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -180,7 +180,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'cream-cake',
                 'description' => 'A delicate cream cake with Bavarian cream and vanilla wafer crumble. Light, airy, and elegant.',
                 'price' => 36.00,
-                'stock' => 10,
+
                 'image' => '/images/products/cream-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -193,7 +193,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'lavender-cake',
                 'description' => 'A soothing lavender cake with honey and vanilla notes. Fragrant, delicate, and unforgettable.',
                 'price' => 44.00,
-                'stock' => 8,
+
                 'image' => '/images/products/lavender-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -204,7 +204,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'mint-cake',
                 'description' => 'A cool mint cake with chocolate chips and mint buttercream. Refreshing with every bite.',
                 'price' => 39.00,
-                'stock' => 10,
+
                 'image' => '/images/products/mint-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -215,7 +215,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'coral-cake',
                 'description' => 'A warm coral cake with peach and raspberry filling. Tropical vibes in every slice.',
                 'price' => 41.00,
-                'stock' => 10,
+
                 'image' => '/images/products/coral-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -226,7 +226,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'peach-cake',
                 'description' => 'A soft peach cake with caramelized peach slices and whipped cream. Summer in a cake.',
                 'price' => 38.00,
-                'stock' => 10,
+
                 'image' => '/images/products/peach-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -237,7 +237,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'navy-cake',
                 'description' => 'A deep navy cake with blueberry jam and mascarpone cream. Sophisticated and berry-forward.',
                 'price' => 43.00,
-                'stock' => 8,
+
                 'image' => '/images/products/navy-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -248,7 +248,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'olive-cake',
                 'description' => 'A unique olive cake with pistachio and lemon. Earthy, nutty, and surprisingly delightful.',
                 'price' => 39.00,
-                'stock' => 10,
+
                 'image' => '/images/products/olive-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -261,7 +261,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'teal-cake',
                 'description' => 'A striking teal cake with coconut and lime layers. Bold color meets tropical flavor.',
                 'price' => 43.00,
-                'stock' => 8,
+
                 'image' => '/images/products/teal-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -272,7 +272,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'gold-cake',
                 'description' => 'A luxurious gold cake with salted caramel and toffee layers. Rich, indulgent, and show-stopping.',
                 'price' => 52.00,
-                'stock' => 6,
+
                 'image' => '/images/products/gold-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,
@@ -283,7 +283,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'silver-cake',
                 'description' => 'An elegant silver cake with Earl Grey tea and vanilla bean. Sophisticated and subtly sweet.',
                 'price' => 48.00,
-                'stock' => 8,
+
                 'image' => '/images/products/silver-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -294,7 +294,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'rose-cake',
                 'description' => 'A romantic rose cake with rosewater cream and pistachio crumble. Floral, nutty, and divine.',
                 'price' => 46.00,
-                'stock' => 8,
+
                 'image' => '/images/products/rose-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -305,7 +305,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'plum-cake',
                 'description' => 'A fragrant plum cake with spiced plum compote and cinnamon cream. Warm and seasonal.',
                 'price' => 42.00,
-                'stock' => 8,
+
                 'image' => '/images/products/plum-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -316,7 +316,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'salmon-cake',
                 'description' => 'A soft salmon-colored cake with guava and cream cheese filling. Tropical elegance on a plate.',
                 'price' => 40.00,
-                'stock' => 10,
+
                 'image' => '/images/products/salmon-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -329,7 +329,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'sky-cake',
                 'description' => 'A light sky blue cake with cotton candy flavoring and cloud-like frosting. Whimsical and delicious.',
                 'price' => 39.00,
-                'stock' => 10,
+
                 'image' => '/images/products/sky-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -340,7 +340,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'lime-cake',
                 'description' => 'A tangy lime cake with key lime curd and coconut cream. Zingy, tropical, and addictive.',
                 'price' => 37.00,
-                'stock' => 10,
+
                 'image' => '/images/products/lime-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -351,7 +351,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'indigo-cake',
                 'description' => 'A deep indigo cake with blackberry compote and vanilla mousse. Mysterious and deeply flavorful.',
                 'price' => 45.00,
-                'stock' => 8,
+
                 'image' => '/images/products/indigo-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -362,7 +362,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'amber-cake',
                 'description' => 'A warm amber cake with maple syrup and brown butter frosting. Cozy, comforting, and rich.',
                 'price' => 41.00,
-                'stock' => 10,
+
                 'image' => '/images/products/amber-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -373,7 +373,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'turquoise-cake',
                 'description' => 'A gorgeous turquoise cake with pineapple and coconut layers. Island-inspired and irresistible.',
                 'price' => 41.00,
-                'stock' => 10,
+
                 'image' => '/images/products/turquoise-cake.svg',
                 'is_active' => true,
                 'is_featured' => false,
@@ -384,7 +384,7 @@ class ProductSeeder extends Seeder
                 'slug' => 'chocolate-cake',
                 'description' => 'A rich chocolate cake with double chocolate ganache and cocoa dusting. The ultimate chocolate indulgence.',
                 'price' => 45.00,
-                'stock' => 10,
+
                 'image' => '/images/products/chocolate-cake.svg',
                 'is_active' => true,
                 'is_featured' => true,

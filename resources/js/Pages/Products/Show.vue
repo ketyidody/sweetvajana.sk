@@ -49,20 +49,15 @@
           <p class="text-2xl text-primary mb-6">€{{ product.price }}</p>
           <p class="text-muted-foreground leading-relaxed mb-6">{{ product.description }}</p>
 
-          <!-- Online orderable: stock + add to cart -->
-          <template v-if="product.is_orderable_online">
-            <div class="flex items-center gap-2 text-sm mb-6">
-              <span
-                class="inline-flex items-center gap-1.5"
-                :class="product.stock > 0 ? 'text-green-600' : 'text-destructive'"
-              >
-                <CheckCircleIcon v-if="product.stock > 0" class="w-4 h-4" />
-                <XCircleIcon v-else class="w-4 h-4" />
-                {{ product.stock > 0 ? t('product.in_stock', { count: product.stock }) : t('product.out_of_stock') }}
-              </span>
-            </div>
+          <!-- Soonest availability -->
+          <div v-if="product.soonest_availability" class="inline-flex items-center gap-2 text-sm text-muted-foreground mb-6">
+            <ClockIcon class="w-4 h-4 flex-shrink-0" />
+            <span>{{ tn('product.soonest_availability', product.soonest_availability) }}</span>
+          </div>
 
-            <div v-if="product.stock > 0" class="flex items-center gap-3">
+          <!-- Online orderable: add to cart -->
+          <template v-if="product.is_orderable_online">
+            <div class="flex items-center gap-3">
               <div class="flex items-center border border-border rounded-md">
                 <button
                   class="px-3 py-2 hover:bg-muted transition-colors"
@@ -76,15 +71,12 @@
                   v-model.number="quantity"
                   type="number"
                   min="1"
-                  :max="product.stock"
                   class="w-14 text-center py-2 text-sm border-x border-border bg-background focus:outline-none"
                   @change="clampQuantity"
                 />
                 <button
                   class="px-3 py-2 hover:bg-muted transition-colors"
-                  :disabled="quantity >= product.stock"
-                  :class="quantity >= product.stock ? 'opacity-50 cursor-not-allowed' : ''"
-                  @click="quantity < product.stock && quantity++"
+                  @click="quantity++"
                 >
                   <PlusIcon class="w-4 h-4" />
                 </button>
@@ -172,14 +164,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
-import { ArrowLeft as ArrowLeftIcon, CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, Minus as MinusIcon, Plus as PlusIcon, ShoppingCart as ShoppingCartIcon, ClipboardList as ClipboardListIcon } from 'lucide-vue-next'
+import { ArrowLeft as ArrowLeftIcon, Minus as MinusIcon, Plus as PlusIcon, ShoppingCart as ShoppingCartIcon, ClipboardList as ClipboardListIcon, Clock as ClockIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import { useTranslation } from '@/composables/useTranslation'
 import { useLocale } from '@/composables/useLocale'
 import { useRecaptcha } from '@/composables/useRecaptcha'
 
-const { t } = useTranslation()
+const { t, tn } = useTranslation()
 const { localizedUrl } = useLocale()
 const { execute: executeRecaptcha } = useRecaptcha()
 
@@ -193,7 +185,6 @@ const cartItemsCount = computed(() => usePage().props.cartItemsCount)
 
 function clampQuantity() {
   if (quantity.value < 1) quantity.value = 1
-  if (quantity.value > props.product.stock) quantity.value = props.product.stock
 }
 
 function addToCart() {

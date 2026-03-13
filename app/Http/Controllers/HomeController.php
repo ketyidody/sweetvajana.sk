@@ -22,7 +22,6 @@ class HomeController extends Controller
                 'description' => $product->translated('description'),
                 'price' => $product->price,
                 'image' => $product->image,
-                'stock' => $product->stock,
                 'category' => $product->category->translated('name'),
                 'is_orderable_online' => $product->is_orderable_online,
             ]);

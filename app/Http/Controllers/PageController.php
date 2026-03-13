@@ -18,6 +18,7 @@ class PageController extends Controller
                 'title' => $page->translated('title'),
                 'content' => $page->translated('content'),
                 'slug' => $page->slug,
+                'background_image' => $page->background_image,
             ],
         ]);
     }

@@ -35,12 +35,7 @@ class CheckoutController extends Controller
         foreach ($cart as $productId => $cartItem) {
             if ($products->has($productId)) {
                 $product = $products[$productId];
-                $quantity = min($cartItem['quantity'], $product->stock);
-
-                if ($quantity <= 0) {
-                    continue;
-                }
-
+                $quantity = $cartItem['quantity'];
                 $lineTotal = $product->price * $quantity;
                 $subtotal += $lineTotal;
 
@@ -98,12 +93,7 @@ class CheckoutController extends Controller
                 }
 
                 $product = $products[$productId];
-                $quantity = min($cartItem['quantity'], $product->stock);
-
-                if ($quantity <= 0) {
-                    continue;
-                }
-
+                $quantity = $cartItem['quantity'];
                 $lineTotal = $product->price * $quantity;
                 $subtotal += $lineTotal;
 
@@ -114,8 +104,6 @@ class CheckoutController extends Controller
                     'quantity' => $quantity,
                     'subtotal' => $lineTotal,
                 ];
-
-                $product->decrement('stock', $quantity);
             }
 
             if (empty($items)) {
@@ -131,7 +119,10 @@ class CheckoutController extends Controller
                 'customer_email' => $request->customer_email,
                 'customer_phone' => $request->customer_phone,
                 'shipping_address' => $request->shipping_address,
-                'billing_address' => $request->shipping_address,
+                'billing_address' => $request->billing_address ?: $request->shipping_address,
+                'company_name' => $request->company_name,
+                'company_id' => $request->company_id,
+                'vat_number' => $request->vat_number,
                 'subtotal' => $subtotal,
                 'tax' => 0,
                 'shipping' => 0,
@@ -190,4 +181,5 @@ class CheckoutController extends Controller
 
         return redirect()->route('orders.confirmation', $order);
     }
+
 }
