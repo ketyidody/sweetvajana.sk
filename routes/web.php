@@ -23,6 +23,7 @@ use App\Http\Controllers\OrderConfirmationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SpecialOrderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -62,6 +63,10 @@ Route::prefix('{locale}')
     ->where(['locale' => '[a-z]{2}'])
     ->middleware('set-locale')
     ->group($publicRoutes);
+
+// SEO routes (outside locale groups, no middleware)
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 // GoPay callback routes (outside locale groups)
 Route::get('/gopay/return', [GoPayController::class, 'return'])->name('gopay.return');

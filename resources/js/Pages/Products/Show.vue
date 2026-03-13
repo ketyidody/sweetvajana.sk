@@ -1,5 +1,12 @@
 <template>
-  <Head :title="product.name" />
+  <Head :title="product.name">
+    <meta head-key="description" name="description" :content="metaDescription" />
+    <meta head-key="og:title" property="og:title" :content="product.name" />
+    <meta head-key="og:description" property="og:description" :content="metaDescription" />
+    <meta head-key="og:type" property="og:type" content="product" />
+    <meta v-if="product.image_url" head-key="og:image" property="og:image" :content="product.image_url" />
+    <meta v-if="product.image_url" head-key="twitter:image" name="twitter:image" :content="product.image_url" />
+  </Head>
   <div class="min-h-screen flex flex-col bg-background">
     <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
 
@@ -177,6 +184,11 @@ const { execute: executeRecaptcha } = useRecaptcha()
 
 const props = defineProps({
   product: Object,
+})
+
+const metaDescription = computed(() => {
+  const desc = props.product.description || ''
+  return desc.length > 160 ? desc.substring(0, 157) + '...' : desc
 })
 
 const selectedImage = ref(props.product.image)

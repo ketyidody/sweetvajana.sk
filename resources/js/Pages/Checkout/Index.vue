@@ -1,5 +1,7 @@
 <template>
-  <Head :title="t('checkout.title')" />
+  <Head :title="t('checkout.title')">
+    <meta name="robots" content="noindex, nofollow" />
+  </Head>
   <div class="min-h-screen flex flex-col bg-background">
     <Header :cart-items-count="cartItemsCount" @cart-click="() => router.visit(localizedUrl('/cart'))" />
 

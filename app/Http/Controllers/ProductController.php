@@ -31,6 +31,7 @@ class ProductController extends Controller
                 'category_slug' => $product->category->slug,
                 'is_orderable_online' => $product->is_orderable_online,
                 'soonest_availability' => $product->soonest_availability,
+                'image_url' => $product->image ? url($product->image) : null,
             ],
         ]);
     }
