@@ -23,6 +23,7 @@ class SiteSettingSeeder extends Seeder
             'contact_text' => 'Get in touch with us for custom orders and inquiries.',
             'meta_description' => 'Sweet Vajana - Handcrafted cakes, cookies, and sweet treats made with love.',
             'footer_text' => 'Sweet Vajana. All rights reserved.',
+            'google_maps_embed_url' => '',
         ];
 
         foreach ($settings as $key => $value) {

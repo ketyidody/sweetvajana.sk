@@ -56,6 +56,21 @@
         </div>
       </div>
 
+      <!-- Google Maps -->
+      <div v-if="settings.google_maps_embed_url" class="border-t border-border mt-8 pt-8">
+        <div class="rounded-lg overflow-hidden">
+          <iframe
+            :src="settings.google_maps_embed_url"
+            width="100%"
+            height="300"
+            style="border:0;"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          />
+        </div>
+      </div>
+
       <div class="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
         <p>{{ settings.footer_text || `© ${currentYear} Sweet Vajana. ${t('footer.copyright')}` }}</p>
       </div>

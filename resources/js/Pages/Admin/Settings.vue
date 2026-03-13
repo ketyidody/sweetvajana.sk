@@ -131,6 +131,16 @@
               <label class="block text-sm font-medium mb-1">Contact Text</label>
               <textarea v-model="form.contact_text" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
             </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Google Maps Embed URL</label>
+              <input v-model="form.google_maps_embed_url" type="text" placeholder="https://www.google.com/maps/embed?pb=..." class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
+              <p class="text-xs text-muted-foreground mt-1">
+                In Google Maps, find your location → Share → Embed a map → copy only the <code class="bg-muted px-1 rounded">src="..."</code> URL from the iframe code.
+              </p>
+              <div v-if="form.google_maps_embed_url" class="mt-2 rounded-md overflow-hidden border border-border">
+                <iframe :src="form.google_maps_embed_url" width="100%" height="200" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -353,6 +363,7 @@ const form = useForm({
   favicon: null,
   logo: null,
   translations: buildTranslationsData(),
+  google_maps_embed_url: props.settings.google_maps_embed_url ?? '',
   invoice_seller_name: props.settings.invoice_seller_name ?? '',
   invoice_seller_address: props.settings.invoice_seller_address ?? '',
   invoice_seller_company_id: props.settings.invoice_seller_company_id ?? '',

@@ -58,6 +58,7 @@ class AdminSettingController extends Controller
             'invoice_seller_bank_account' => 'nullable|string|max:255',
             'invoice_seller_email' => 'nullable|email|max:255',
             'invoice_seller_phone' => 'nullable|string|max:100',
+            'google_maps_embed_url' => ['nullable', 'string', 'max:2048', 'regex:/^https:\/\/www\.google\.com\/maps\/embed/'],
         ]);
 
         $fileFields = ['hero_images', 'remove_hero_images', 'favicon', 'logo'];
