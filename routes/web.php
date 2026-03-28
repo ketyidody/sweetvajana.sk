@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\AdminLanguageController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminProductOptionController;
+use App\Http\Controllers\Admin\AdminProductSizeController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSpecialOrderController;
 use App\Http\Controllers\Admin\AdminTranslationController;
@@ -89,6 +91,26 @@ Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name(
 
     Route::resource('categories', AdminCategoryController::class)->except('show');
     Route::resource('products', AdminProductController::class)->except('show');
+
+    // Global product options (corpus, cream flavor, additions)
+    Route::get('product-options', [AdminProductOptionController::class, 'index'])->name('product-options.index');
+    Route::post('product-options/corpuses', [AdminProductOptionController::class, 'storeCorpus'])->name('product-options.corpuses.store');
+    Route::put('product-options/corpuses/{corpus}', [AdminProductOptionController::class, 'updateCorpus'])->name('product-options.corpuses.update');
+    Route::delete('product-options/corpuses/{corpus}', [AdminProductOptionController::class, 'destroyCorpus'])->name('product-options.corpuses.destroy');
+    Route::post('product-options/cream-flavors', [AdminProductOptionController::class, 'storeCreamFlavor'])->name('product-options.cream-flavors.store');
+    Route::put('product-options/cream-flavors/{creamFlavor}', [AdminProductOptionController::class, 'updateCreamFlavor'])->name('product-options.cream-flavors.update');
+    Route::delete('product-options/cream-flavors/{creamFlavor}', [AdminProductOptionController::class, 'destroyCreamFlavor'])->name('product-options.cream-flavors.destroy');
+    Route::post('product-options/additions', [AdminProductOptionController::class, 'storeAddition'])->name('product-options.additions.store');
+    Route::put('product-options/additions/{addition}', [AdminProductOptionController::class, 'updateAddition'])->name('product-options.additions.update');
+    Route::delete('product-options/additions/{addition}', [AdminProductOptionController::class, 'destroyAddition'])->name('product-options.additions.destroy');
+    Route::post('product-options/sizes', [AdminProductOptionController::class, 'storeSize'])->name('product-options.sizes.store');
+    Route::put('product-options/sizes/{size}', [AdminProductOptionController::class, 'updateSize'])->name('product-options.sizes.update');
+    Route::delete('product-options/sizes/{size}', [AdminProductOptionController::class, 'destroySize'])->name('product-options.sizes.destroy');
+
+    // Per-product size assignment
+    Route::post('products/{product}/sizes', [AdminProductSizeController::class, 'store'])->name('products.sizes.store');
+    Route::put('products/{product}/sizes/{size}', [AdminProductSizeController::class, 'update'])->name('products.sizes.update');
+    Route::delete('products/{product}/sizes/{size}', [AdminProductSizeController::class, 'destroy'])->name('products.sizes.destroy');
 
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');

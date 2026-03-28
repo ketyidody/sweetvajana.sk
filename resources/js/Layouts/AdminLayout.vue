@@ -119,6 +119,7 @@ const navItems = [
   { href: '/admin', label: 'Dashboard', icon: DashboardIcon },
   { href: '/admin/categories', label: 'Categories', icon: CategoriesIcon },
   { href: '/admin/products', label: 'Products', icon: ProductsIcon },
+  { href: '/admin/product-options', label: 'Product Options', icon: ProductsIcon },
   { href: '/admin/orders', label: 'Orders', icon: OrdersIcon },
   { href: '/admin/special-orders', label: 'Special Orders', icon: SpecialOrdersIcon },
   { href: '/admin/pages', label: 'Pages', icon: PagesIcon },

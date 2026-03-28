@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Addition;
 use App\Models\Category;
+use App\Models\Corpus;
+use App\Models\CreamFlavor;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,27 +16,60 @@ class ProductController extends Controller
     {
         $product->load(['category.translations', 'translations']);
 
+        $locale = app()->getLocale();
+
         $allImages = collect([$product->image])
             ->merge($product->images ?? [])
             ->values()
             ->all();
 
-        return Inertia::render('Products/Show', [
-            'product' => [
-                'id' => $product->id,
-                'name' => $product->translated('name'),
-                'slug' => $product->slug,
-                'description' => $product->translated('description'),
-                'price' => $product->price,
-                'image' => $product->image,
-                'images' => $allImages,
-                'category' => $product->category->translated('name'),
-                'category_slug' => $product->category->slug,
-                'is_orderable_online' => $product->is_orderable_online,
-                'soonest_availability' => $product->soonest_availability,
-                'image_url' => $product->image ? url($product->image) : null,
-            ],
-        ]);
+        $productData = [
+            'id' => $product->id,
+            'name' => $product->translated('name'),
+            'slug' => $product->slug,
+            'description' => $product->translated('description'),
+            'price' => $product->price,
+            'image' => $product->image,
+            'images' => $allImages,
+            'category' => $product->category->translated('name'),
+            'category_slug' => $product->category->slug,
+            'is_orderable_online' => $product->is_orderable_online,
+            'soonest_availability' => $product->soonest_availability,
+            'image_url' => $product->image ? url($product->image) : null,
+            'sizes' => [],
+            'corpuses' => [],
+            'cream_flavors' => [],
+            'additions' => [],
+        ];
+
+        if (! $product->is_orderable_online) {
+            $product->load('sizes.translations');
+
+            $corpuses = Corpus::with('translations')->get();
+            $creamFlavors = CreamFlavor::with('translations')->get();
+            $additions = Addition::with('translations')->get();
+
+            $productData['sizes'] = $product->sizes->map(fn ($s) => [
+                'id' => $s->id,
+                'name' => $s->translated('name', $locale),
+                'price' => $s->pivot->price,
+            ]);
+            $productData['corpuses'] = $corpuses->map(fn ($c) => [
+                'id' => $c->id,
+                'name' => $c->translated('name', $locale),
+            ]);
+            $productData['cream_flavors'] = $creamFlavors->map(fn ($c) => [
+                'id' => $c->id,
+                'name' => $c->translated('name', $locale),
+            ]);
+            $productData['additions'] = $additions->map(fn ($a) => [
+                'id' => $a->id,
+                'name' => $a->translated('name', $locale),
+                'price' => $a->price,
+            ]);
+        }
+
+        return Inertia::render('Products/Show', ['product' => $productData]);
     }
 
     public function index(Request $request)
