@@ -177,7 +177,7 @@ class TranslationSeeder extends Seeder
         foreach ($translations as $group => $keys) {
             foreach ($keys as $key => $locales) {
                 foreach ($locales as $locale => $value) {
-                    Translation::updateOrCreate(
+                    Translation::firstOrCreate(
                         ['locale' => $locale, 'group' => $group, 'key' => $key],
                         ['value' => $value]
                     );
