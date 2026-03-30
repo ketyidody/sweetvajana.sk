@@ -9,15 +9,6 @@
       <!-- Category Menu -->
       <div ref="menuRef" class="flex flex-wrap items-center gap-1 mb-8">
         <button
-          class="px-4 py-2 text-sm rounded-md transition-colors"
-          :class="!filters.category
-            ? 'bg-primary text-primary-foreground'
-            : 'text-muted-foreground hover:text-foreground hover:bg-muted'"
-          @click="applyFilter(null)"
-        >
-          {{ t('product.all') }}
-        </button>
-        <button
           v-if="availableForCollectionCount > 0"
           class="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-md transition-colors"
           :class="filters.category === 'available-for-collection'
