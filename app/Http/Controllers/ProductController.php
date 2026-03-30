@@ -74,6 +74,18 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
+        if (! $request->filled('category')) {
+            $first = Category::whereNull('parent_id')
+                ->where('is_active', true)
+                ->orderBy('position')
+                ->orderBy('name')
+                ->first();
+
+            if ($first) {
+                return redirect($request->url().'?category='.$first->slug);
+            }
+        }
+
         $query = Product::with(['category.translations'])
             ->withTranslations()
             ->where('is_active', true);
