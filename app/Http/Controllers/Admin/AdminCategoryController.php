@@ -13,6 +13,20 @@ use Inertia\Inertia;
 
 class AdminCategoryController extends Controller
 {
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:categories,id',
+        ]);
+
+        foreach ($validated['ids'] as $position => $id) {
+            Category::where('id', $id)->update(['position' => $position + 1]);
+        }
+
+        return back();
+    }
+
     public function index()
     {
         $categories = Category::getTree();

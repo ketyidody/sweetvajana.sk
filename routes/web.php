@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+    Route::post('categories/reorder', [AdminCategoryController::class, 'reorder'])->name('categories.reorder');
     Route::resource('categories', AdminCategoryController::class)->except('show');
     Route::resource('products', AdminProductController::class)->except('show');
 
