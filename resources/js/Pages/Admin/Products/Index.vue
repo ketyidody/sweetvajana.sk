@@ -9,6 +9,36 @@
       </Link>
     </div>
 
+    <!-- Flash message -->
+    <div v-if="$page.props.flash?.success" class="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm">
+      {{ $page.props.flash.success }}
+    </div>
+
+    <!-- Import / Export toolbar -->
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+      <!-- Export -->
+      <div class="flex items-center gap-2">
+        <select v-model="exportFilter" class="text-sm border border-border rounded-md px-2 py-1.5 bg-background text-foreground">
+          <option value="all">All products</option>
+          <option value="not_orderable_online">Not orderable online</option>
+        </select>
+        <a :href="`/admin/products/export?filter=${exportFilter}`" class="inline-flex items-center gap-2 px-3 py-1.5 border border-border rounded-md text-sm hover:bg-muted">
+          <DownloadIcon class="w-4 h-4" />
+          Export CSV
+        </a>
+      </div>
+
+      <!-- Import -->
+      <div class="flex items-center gap-2">
+        <label class="inline-flex items-center gap-2 px-3 py-1.5 border border-border rounded-md text-sm hover:bg-muted cursor-pointer">
+          <UploadIcon class="w-4 h-4" />
+          Import CSV
+          <input type="file" accept=".csv" class="hidden" @change="handleImport" />
+        </label>
+        <span v-if="importStatus" class="text-sm text-muted-foreground">{{ importStatus }}</span>
+      </div>
+    </div>
+
     <div class="bg-card rounded-lg border border-border">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -68,15 +98,36 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
-import { Plus as PlusIcon, Pencil as PencilIcon, Trash2 as TrashIcon, Image as ImageIcon } from 'lucide-vue-next'
+import { Plus as PlusIcon, Pencil as PencilIcon, Trash2 as TrashIcon, Image as ImageIcon, Download as DownloadIcon, Upload as UploadIcon } from 'lucide-vue-next'
 
 defineProps({ products: Array })
+
+const exportFilter = ref('not_orderable_online')
+const importStatus = ref('')
 
 function deleteProduct(product) {
   if (confirm(`Delete "${product.name}"?`)) {
     router.delete(`/admin/products/${product.id}`)
   }
+}
+
+function handleImport(event) {
+  const file = event.target.files[0]
+  if (!file) return
+
+  importStatus.value = 'Uploading...'
+
+  const form = new FormData()
+  form.append('file', file)
+  form.append('_token', document.querySelector('meta[name="csrf-token"]')?.content ?? '')
+
+  router.post('/admin/products/import', form, {
+    onSuccess: () => { importStatus.value = '' },
+    onError: (errors) => { importStatus.value = errors.file ?? 'Import failed.' },
+    onFinish: () => { event.target.value = '' },
+  })
 }
 </script>

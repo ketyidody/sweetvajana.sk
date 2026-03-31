@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminProductOptionController;
+use App\Http\Controllers\Admin\AdminProductImportExportController;
 use App\Http\Controllers\Admin\AdminProductSizeController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSpecialOrderController;
@@ -91,6 +92,8 @@ Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name(
 
     Route::post('categories/reorder', [AdminCategoryController::class, 'reorder'])->name('categories.reorder');
     Route::resource('categories', AdminCategoryController::class)->except('show');
+    Route::get('products/export', [AdminProductImportExportController::class, 'export'])->name('products.export');
+    Route::post('products/import', [AdminProductImportExportController::class, 'import'])->name('products.import');
     Route::resource('products', AdminProductController::class)->except('show');
 
     // Global product options (corpus, cream flavor, additions)
