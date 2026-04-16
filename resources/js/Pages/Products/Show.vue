@@ -113,25 +113,6 @@
 
               <form @submit.prevent="submitSpecialOrder" class="space-y-4">
 
-                <!-- Size selector -->
-                <div v-if="product.sizes?.length">
-                  <label class="block text-sm font-medium mb-1">
-                    {{ t('special_order.size') }}
-                    <span class="text-destructive ml-0.5">*</span>
-                  </label>
-                  <select
-                    v-model="specialForm.size_id"
-                    required
-                    class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  >
-                    <option :value="null" disabled>— {{ t('special_order.select_size') }} —</option>
-                    <option v-for="size in product.sizes" :key="size.id" :value="size.id">
-                      {{ size.name }} — €{{ size.price }}
-                    </option>
-                  </select>
-                  <p v-if="specialForm.errors.size_id" class="text-destructive text-xs mt-1">{{ specialForm.errors.size_id }}</p>
-                </div>
-
                 <!-- Corpus selector -->
                 <div v-if="product.corpuses?.length">
                   <label class="block text-sm font-medium mb-1">
@@ -168,33 +149,6 @@
                     </option>
                   </select>
                   <p v-if="specialForm.errors.cream_flavor_id" class="text-destructive text-xs mt-1">{{ specialForm.errors.cream_flavor_id }}</p>
-                </div>
-
-                <!-- Additions -->
-                <div v-if="product.additions?.length">
-                  <label class="block text-sm font-medium mb-2">{{ t('special_order.additions') }}</label>
-                  <div class="space-y-1.5">
-                    <label
-                      v-for="addition in product.additions"
-                      :key="addition.id"
-                      class="flex items-center gap-2 cursor-pointer"
-                    >
-                      <input
-                        v-model="specialForm.addition_ids"
-                        type="checkbox"
-                        :value="addition.id"
-                        class="accent-primary rounded"
-                      />
-                      <span class="text-sm flex-1">{{ addition.name }}</span>
-                      <span class="text-sm text-muted-foreground">+€{{ addition.price }}</span>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Dynamic total -->
-                <div v-if="product.sizes?.length || product.additions?.length" class="flex items-center justify-between py-2 border-t border-border">
-                  <span class="text-sm font-medium">{{ t('special_order.total_price') }}</span>
-                  <span class="text-lg font-semibold text-primary">€{{ totalPrice }}</span>
                 </div>
 
                 <div>
@@ -296,28 +250,18 @@ const specialForm = useForm({
   customer_email: user.value?.email ?? '',
   customer_phone: user.value?.phone ?? '',
   message: '',
-  size_id: null,
   corpus_id: null,
   cream_flavor_id: null,
-  addition_ids: [],
   recaptcha_token: '',
 })
 
-const totalPrice = computed(() => {
-  const selectedSize = (props.product.sizes ?? []).find(s => s.id === specialForm.size_id)
-  const base = selectedSize ? parseFloat(selectedSize.price) : parseFloat(props.product.price) || 0
-  const additionsTotal = (props.product.additions ?? [])
-    .filter(a => specialForm.addition_ids.includes(a.id))
-    .reduce((sum, a) => sum + parseFloat(a.price), 0)
-  return (base + additionsTotal).toFixed(2)
-})
 
 async function submitSpecialOrder() {
   specialForm.recaptcha_token = await executeRecaptcha('special_order')
   specialForm.post(localizedUrl('/special-order'), {
     preserveScroll: true,
     onSuccess: () => {
-      specialForm.reset('message', 'size_id', 'corpus_id', 'cream_flavor_id', 'addition_ids')
+      specialForm.reset('message', 'corpus_id', 'cream_flavor_id')
     },
   })
 }

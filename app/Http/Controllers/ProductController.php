@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Addition;
 use App\Models\Category;
 use App\Models\Corpus;
 use App\Models\CreamFlavor;
@@ -36,24 +35,14 @@ class ProductController extends Controller
             'is_orderable_online' => $product->is_orderable_online,
             'soonest_availability' => $product->soonest_availability,
             'image_url' => $product->image ? url($product->image) : null,
-            'sizes' => [],
             'corpuses' => [],
             'cream_flavors' => [],
-            'additions' => [],
         ];
 
         if (! $product->is_orderable_online) {
-            $product->load('sizes.translations');
-
             $corpuses = Corpus::with('translations')->get();
             $creamFlavors = CreamFlavor::with('translations')->get();
-            $additions = Addition::with('translations')->get();
 
-            $productData['sizes'] = $product->sizes->map(fn ($s) => [
-                'id' => $s->id,
-                'name' => $s->translated('name', $locale),
-                'price' => $s->pivot->price,
-            ]);
             $productData['corpuses'] = $corpuses->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->translated('name', $locale),
@@ -61,11 +50,6 @@ class ProductController extends Controller
             $productData['cream_flavors'] = $creamFlavors->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->translated('name', $locale),
-            ]);
-            $productData['additions'] = $additions->map(fn ($a) => [
-                'id' => $a->id,
-                'name' => $a->translated('name', $locale),
-                'price' => $a->price,
             ]);
         }
 

@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Language;
 use App\Models\ModelTranslation;
 use App\Models\Product;
-use App\Models\Size;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -80,7 +79,7 @@ class AdminProductController extends Controller
 
     public function edit(Product $product)
     {
-        $product->load(['translations', 'sizes.translations']);
+        $product->load(['translations']);
 
         $translationData = [];
         foreach ($product->translations as $t) {
@@ -89,25 +88,12 @@ class AdminProductController extends Controller
 
         $defaultLocale = Language::getDefault()?->code ?? 'sk';
 
-        $allSizes = Size::with('translations')->get()->map(fn ($s) => [
-            'id' => $s->id,
-            'name' => $s->translated('name', $defaultLocale),
-        ]);
-
-        $productSizes = $product->sizes->map(fn ($s) => [
-            'size_id' => $s->id,
-            'name' => $s->translated('name', $defaultLocale),
-            'price' => $s->pivot->price,
-        ]);
-
         return Inertia::render('Admin/Products/Form', [
             'product' => $product,
             'categories' => Category::getTree()->filter(fn ($c) => $c->is_active)->values(),
             'productTranslations' => $translationData,
             'languages' => Language::getActive(),
             'defaultLocale' => $defaultLocale,
-            'allSizes' => $allSizes,
-            'productSizes' => $productSizes,
         ]);
     }
 

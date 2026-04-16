@@ -181,93 +181,6 @@
         </div>
       </form>
 
-      <!-- Product Sizes (only when editing and is_orderable_online is false) -->
-      <div v-if="product && !form.is_orderable_online" class="mt-8 pt-8 border-t border-border">
-        <h2 class="text-base font-medium mb-1">Veľkosti produktu (Product Sizes)</h2>
-        <p class="text-xs text-muted-foreground mb-4">Assign sizes available for this product. Each size has its own price.</p>
-
-        <!-- Assigned sizes list -->
-        <div class="border border-border rounded-lg overflow-hidden mb-4">
-          <div v-if="!productSizes.length" class="px-4 py-6 text-sm text-muted-foreground text-center">
-            No sizes assigned yet.
-          </div>
-          <div v-for="ps in productSizes" :key="ps.size_id" class="border-b border-border last:border-0">
-            <!-- Display row -->
-            <div v-if="editingSizeId !== ps.size_id" class="flex items-center justify-between px-4 py-3">
-              <span class="text-sm">{{ ps.name }}</span>
-              <div class="flex items-center gap-3">
-                <span class="text-sm font-medium">€{{ ps.price }}</span>
-                <button
-                  type="button"
-                  @click="startSizeEdit(ps)"
-                  class="text-xs px-2 py-1 border border-border rounded hover:bg-muted transition-colors"
-                >Edit price</button>
-                <button
-                  type="button"
-                  @click="removeSize(ps.size_id)"
-                  class="text-xs px-2 py-1 border border-destructive/50 text-destructive rounded hover:bg-destructive/10 transition-colors"
-                >Remove</button>
-              </div>
-            </div>
-            <!-- Edit price row -->
-            <div v-else class="flex items-center gap-3 px-4 py-3 bg-muted/30">
-              <span class="text-sm flex-1">{{ ps.name }}</span>
-              <input
-                v-model="editSizePrice"
-                type="number"
-                step="0.01"
-                min="0"
-                class="w-28 px-3 py-1.5 text-sm border border-border rounded bg-background"
-              />
-              <button
-                type="button"
-                @click="saveSizePrice(ps.size_id)"
-                class="text-xs px-3 py-1.5 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
-              >Save</button>
-              <button
-                type="button"
-                @click="editingSizeId = null"
-                class="text-xs px-3 py-1.5 border border-border rounded hover:bg-muted transition-colors"
-              >Cancel</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Add size form -->
-        <div v-if="availableSizes.length" class="border border-dashed border-border rounded-lg px-4 py-4">
-          <p class="text-xs font-medium text-muted-foreground mb-3">Add size</p>
-          <div class="flex items-end gap-3">
-            <div class="flex-1">
-              <label class="block text-xs text-muted-foreground mb-1">Size</label>
-              <select v-model="newSizeId" class="w-full px-3 py-1.5 text-sm border border-border rounded bg-background">
-                <option value="">Select a size</option>
-                <option v-for="s in availableSizes" :key="s.id" :value="s.id">{{ s.name }}</option>
-              </select>
-            </div>
-            <div class="w-28">
-              <label class="block text-xs text-muted-foreground mb-1">Price (€)</label>
-              <input
-                v-model="newSizePrice"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                class="w-full px-3 py-1.5 text-sm border border-border rounded bg-background"
-              />
-            </div>
-            <button
-              type="button"
-              @click="addSize"
-              :disabled="!newSizeId || newSizePrice === ''"
-              class="px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >Add</button>
-          </div>
-        </div>
-        <p v-else-if="!productSizes.length" class="text-xs text-muted-foreground">
-          No global sizes available. Add sizes in
-          <Link href="/admin/product-options" class="underline">Product Options</Link> first.
-        </p>
-      </div>
     </div>
   </AdminLayout>
 </template>
@@ -284,8 +197,6 @@ const props = defineProps({
   productTranslations: { type: Object, default: () => ({}) },
   languages: { type: Array, default: () => [] },
   defaultLocale: { type: String, default: 'sk' },
-  allSizes: { type: Array, default: () => [] },
-  productSizes: { type: Array, default: () => [] },
 })
 
 const activeLocale = ref(props.defaultLocale)
@@ -358,45 +269,6 @@ function removeNewImage(index) {
   URL.revokeObjectURL(newImagePreviews.value[index])
   newImages.value.splice(index, 1)
   newImagePreviews.value.splice(index, 1)
-}
-
-// Sizes management
-const editingSizeId = ref(null)
-const editSizePrice = ref('')
-const newSizeId = ref('')
-const newSizePrice = ref('')
-
-const availableSizes = computed(() =>
-  props.allSizes.filter(s => !props.productSizes.some(ps => ps.size_id === s.id))
-)
-
-function startSizeEdit(ps) {
-  editingSizeId.value = ps.size_id
-  editSizePrice.value = ps.price
-}
-
-function saveSizePrice(sizeId) {
-  router.put(`/admin/products/${props.product.id}/sizes/${sizeId}`, { price: editSizePrice.value }, {
-    preserveScroll: true,
-    onSuccess: () => { editingSizeId.value = null },
-  })
-}
-
-function removeSize(sizeId) {
-  if (confirm('Remove this size from the product?')) {
-    router.delete(`/admin/products/${props.product.id}/sizes/${sizeId}`, { preserveScroll: true })
-  }
-}
-
-function addSize() {
-  if (!newSizeId.value || newSizePrice.value === '') return
-  router.post(`/admin/products/${props.product.id}/sizes`, {
-    size_id: newSizeId.value,
-    price: newSizePrice.value,
-  }, {
-    preserveScroll: true,
-    onSuccess: () => { newSizeId.value = ''; newSizePrice.value = '' },
-  })
 }
 
 function submit() {

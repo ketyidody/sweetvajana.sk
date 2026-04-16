@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SellerNewSpecialOrderMail;
-use App\Models\Addition;
 use App\Models\Corpus;
 use App\Models\CreamFlavor;
 use App\Models\Product;
@@ -13,7 +12,6 @@ use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\ValidationException;
 
 class SpecialOrderController extends Controller
 {
@@ -25,11 +23,8 @@ class SpecialOrderController extends Controller
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:50',
             'message' => 'nullable|string|max:2000',
-            'size_id' => 'nullable|integer|exists:sizes,id',
             'corpus_id' => [Corpus::exists() ? 'required' : 'nullable', 'integer', 'exists:corpuses,id'],
             'cream_flavor_id' => [CreamFlavor::exists() ? 'required' : 'nullable', 'integer', 'exists:cream_flavors,id'],
-            'addition_ids' => 'nullable|array',
-            'addition_ids.*' => 'integer|exists:additions,id',
             'recaptcha_token' => ['required', 'string', new Recaptcha],
         ]);
 
@@ -38,18 +33,7 @@ class SpecialOrderController extends Controller
             ->where('is_orderable_online', false)
             ->firstOrFail();
 
-        if ($product->sizes()->exists() && empty($validated['size_id'])) {
-            throw ValidationException::withMessages(['size_id' => __('validation.required')]);
-        }
-
         $choices = [];
-
-        if (! empty($validated['size_id'])) {
-            $size = $product->sizes()->where('size_id', $validated['size_id'])->first();
-            if ($size) {
-                $choices['size'] = ['id' => $size->id, 'name' => $size->name, 'price' => $size->pivot->price];
-            }
-        }
 
         if (! empty($validated['corpus_id'])) {
             $corpus = Corpus::find($validated['corpus_id']);
@@ -63,15 +47,6 @@ class SpecialOrderController extends Controller
             if ($creamFlavor) {
                 $choices['cream_flavor'] = ['id' => $creamFlavor->id, 'name' => $creamFlavor->name];
             }
-        }
-
-        if (! empty($validated['addition_ids'])) {
-            $additions = Addition::whereIn('id', $validated['addition_ids'])->get();
-            $choices['additions'] = $additions->map(fn ($a) => [
-                'id' => $a->id,
-                'name' => $a->name,
-                'price' => $a->price,
-            ])->toArray();
         }
 
         $specialOrder = SpecialOrder::create([

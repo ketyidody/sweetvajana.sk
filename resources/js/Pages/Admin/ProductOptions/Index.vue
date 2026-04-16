@@ -31,30 +31,6 @@
         @delete="deleteCreamFlavor"
       />
 
-      <!-- Additions -->
-      <OptionSection
-        title="Doplnky (Additions)"
-        :items="additions"
-        :languages="nonDefaultLanguages"
-        :default-locale="defaultLocale"
-        type="addition"
-        :has-price="true"
-        @add="addAddition"
-        @update="updateAddition"
-        @delete="deleteAddition"
-      />
-
-      <!-- Sizes -->
-      <OptionSection
-        title="Veľkosti (Sizes)"
-        :items="sizes"
-        :languages="nonDefaultLanguages"
-        :default-locale="defaultLocale"
-        type="size"
-        @add="addSize"
-        @update="updateSize"
-        @delete="deleteSize"
-      />
     </div>
   </AdminLayout>
 </template>
@@ -70,8 +46,6 @@ const props = defineProps({
   defaultLocale: String,
   corpuses: Array,
   creamFlavors: Array,
-  additions: Array,
-  sizes: Array,
 })
 
 const nonDefaultLanguages = computed(() => props.languages.filter(l => l.code !== props.defaultLocale))
@@ -102,29 +76,4 @@ function deleteCreamFlavor(id) {
   }
 }
 
-// Size
-function addSize(data) {
-  useForm(data).post('/admin/product-options/sizes', { preserveScroll: true })
-}
-function updateSize({ id, data }) {
-  useForm(data).put(`/admin/product-options/sizes/${id}`, { preserveScroll: true })
-}
-function deleteSize(id) {
-  if (confirm('Delete this size?')) {
-    router.delete(`/admin/product-options/sizes/${id}`, { preserveScroll: true })
-  }
-}
-
-// Addition
-function addAddition(data) {
-  useForm(data).post('/admin/product-options/additions', { preserveScroll: true })
-}
-function updateAddition({ id, data }) {
-  useForm(data).put(`/admin/product-options/additions/${id}`, { preserveScroll: true })
-}
-function deleteAddition(id) {
-  if (confirm('Delete this addition?')) {
-    router.delete(`/admin/product-options/additions/${id}`, { preserveScroll: true })
-  }
-}
 </script>

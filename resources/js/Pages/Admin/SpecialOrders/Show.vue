@@ -22,13 +22,6 @@
               <dt class="text-muted-foreground">Message / Requirements</dt>
               <dd class="whitespace-pre-line">{{ specialOrder.message }}</dd>
             </div>
-            <div v-if="specialOrder.choices?.size">
-              <dt class="text-muted-foreground">Veľkosť (Size)</dt>
-              <dd class="flex items-center justify-between">
-                <span>{{ specialOrder.choices.size.name }}</span>
-                <span class="text-muted-foreground ml-4">€{{ specialOrder.choices.size.price }}</span>
-              </dd>
-            </div>
             <div v-if="specialOrder.choices?.corpus">
               <dt class="text-muted-foreground">Korpus (Corpus)</dt>
               <dd>{{ specialOrder.choices.corpus.name }}</dd>
@@ -36,15 +29,6 @@
             <div v-if="specialOrder.choices?.cream_flavor">
               <dt class="text-muted-foreground">Príchuť krému (Cream Flavor)</dt>
               <dd>{{ specialOrder.choices.cream_flavor.name }}</dd>
-            </div>
-            <div v-if="specialOrder.choices?.additions?.length">
-              <dt class="text-muted-foreground">Doplnky (Additions)</dt>
-              <dd>
-                <div v-for="addition in specialOrder.choices.additions" :key="addition.id" class="flex items-center justify-between">
-                  <span>{{ addition.name }}</span>
-                  <span class="text-muted-foreground ml-4">+€{{ addition.price }}</span>
-                </div>
-              </dd>
             </div>
           </dl>
         </div>
