@@ -50,14 +50,14 @@
             <p v-if="form.errors.name" class="text-destructive text-xs mt-1">{{ form.errors.name }}</p>
           </div>
 
-          <div>
+          <div v-if="form.is_orderable_online">
             <label class="block text-sm font-medium mb-1">Description</label>
             <textarea v-model="form.description" rows="3" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
             <p v-if="form.errors.description" class="text-destructive text-xs mt-1">{{ form.errors.description }}</p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <div>
+            <div v-if="form.is_orderable_online">
               <label class="block text-sm font-medium mb-1">Price</label>
               <input v-model="form.price" type="number" step="0.01" min="0" class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm" />
               <p v-if="form.errors.price" class="text-destructive text-xs mt-1">{{ form.errors.price }}</p>

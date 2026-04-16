@@ -145,6 +145,7 @@ class TranslationSeeder extends Seeder
                 'your_phone' => ['sk' => 'Vas telefon', 'en' => 'Your Phone'],
                 'message' => ['sk' => 'Sprava / poziadavky', 'en' => 'Message / Requirements'],
                 'submit' => ['sk' => 'Odoslat poziadavku', 'en' => 'Submit Request'],
+                'view_prices' => ['sk' => 'Zobraziť cenník', 'en' => 'View Price List'],
                 'success' => ['sk' => 'Vasa poziadavka bola odoslana! Budeme vas kontaktovat.', 'en' => 'Your request has been submitted! We will contact you.'],
                 'size' => ['sk' => 'Velkost', 'en' => 'Size'],
                 'select_size' => ['sk' => 'Vyberte velkost', 'en' => 'Select size'],

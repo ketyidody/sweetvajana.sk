@@ -53,8 +53,16 @@
             {{ product.category }}
           </span>
           <h1 class="text-3xl md:text-4xl mb-4">{{ product.name }}</h1>
-          <p class="text-2xl text-primary mb-6">€{{ product.price }}</p>
-          <p class="text-muted-foreground leading-relaxed mb-6">{{ product.description }}</p>
+          <button
+            v-if="!product.is_orderable_online && pricesPageContent"
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 mb-6 border border-border rounded-md text-sm font-medium hover:bg-muted transition-colors"
+            @click="showPricesModal = true"
+          >
+            {{ t('special_order.view_prices') }}
+          </button>
+          <p v-if="product.is_orderable_online" class="text-2xl text-primary mb-6">€{{ product.price }}</p>
+          <p v-if="product.is_orderable_online" class="text-muted-foreground leading-relaxed mb-6">{{ product.description }}</p>
 
           <!-- Soonest availability -->
           <div v-if="product.soonest_availability" class="inline-flex items-center gap-2 text-sm text-muted-foreground mb-6">
@@ -205,12 +213,42 @@
 
     <Footer />
   </div>
+
+  <!-- Prices modal -->
+  <Teleport to="body">
+    <Transition
+      enter-active-class="ease-out duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="ease-in duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="showPricesModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        @click.self="showPricesModal = false"
+      >
+        <div class="absolute inset-0 bg-black/50" @click="showPricesModal = false" />
+        <div class="relative z-10 w-full max-w-xl max-h-[80vh] overflow-y-auto bg-card border border-border rounded-lg shadow-lg">
+          <button
+            type="button"
+            class="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors"
+            @click="showPricesModal = false"
+          >
+            <XIcon class="w-5 h-5" />
+          </button>
+          <div class="px-6 py-5 text-sm text-foreground prose prose-neutral max-w-none" v-html="pricesPageContent" />
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
-import { ArrowLeft as ArrowLeftIcon, Minus as MinusIcon, Plus as PlusIcon, ShoppingCart as ShoppingCartIcon, ClipboardList as ClipboardListIcon, Clock as ClockIcon } from 'lucide-vue-next'
+import { ArrowLeft as ArrowLeftIcon, Minus as MinusIcon, Plus as PlusIcon, ShoppingCart as ShoppingCartIcon, ClipboardList as ClipboardListIcon, Clock as ClockIcon, X as XIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import { useTranslation } from '@/composables/useTranslation'
@@ -223,6 +261,7 @@ const { execute: executeRecaptcha } = useRecaptcha()
 
 const props = defineProps({
   product: Object,
+  pricesPageContent: { type: String, default: null },
 })
 
 const metaDescription = computed(() => {
@@ -232,6 +271,13 @@ const metaDescription = computed(() => {
 
 const selectedImage = ref(props.product.image)
 const quantity = ref(1)
+const showPricesModal = ref(false)
+
+function onKeyDown(e) {
+  if (e.key === 'Escape' && showPricesModal.value) showPricesModal.value = false
+}
+onMounted(() => document.addEventListener('keydown', onKeyDown))
+onUnmounted(() => document.removeEventListener('keydown', onKeyDown))
 const cartItemsCount = computed(() => usePage().props.cartItemsCount)
 
 function clampQuantity() {

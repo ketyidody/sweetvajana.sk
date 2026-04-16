@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Corpus;
 use App\Models\CreamFlavor;
+use App\Models\Page;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -39,7 +40,15 @@ class ProductController extends Controller
             'cream_flavors' => [],
         ];
 
+        $pricesPageContent = null;
+
         if (! $product->is_orderable_online) {
+            $pricesPage = Page::where('slug', 'prices')->where('is_active', true)->first();
+            if ($pricesPage) {
+                $pricesPage->load('translations');
+                $pricesPageContent = $pricesPage->translated('content');
+            }
+
             $corpuses = Corpus::with('translations')->get();
             $creamFlavors = CreamFlavor::with('translations')->get();
 
@@ -53,7 +62,10 @@ class ProductController extends Controller
             ]);
         }
 
-        return Inertia::render('Products/Show', ['product' => $productData]);
+        return Inertia::render('Products/Show', [
+            'product' => $productData,
+            'pricesPageContent' => $pricesPageContent,
+        ]);
     }
 
     public function index(Request $request)
