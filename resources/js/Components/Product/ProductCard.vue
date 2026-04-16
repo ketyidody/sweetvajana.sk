@@ -17,9 +17,9 @@
       </div>
       <div class="flex items-start justify-between gap-2 mb-2">
         <h3 class="line-clamp-1">{{ product.name }}</h3>
-        <span class="text-primary flex-shrink-0">€{{ product.price }}</span>
+        <span v-if="product.is_orderable_online" class="text-primary flex-shrink-0">€{{ product.price }}</span>
       </div>
-      <p class="text-muted-foreground line-clamp-2 text-sm">
+      <p v-if="product.is_orderable_online" class="text-muted-foreground line-clamp-2 text-sm">
         {{ product.description }}
       </p>
       <div class="mt-3 flex items-center justify-between">

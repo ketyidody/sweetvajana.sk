@@ -32,11 +32,13 @@ class AdminProductController extends Controller
 
     public function store(Request $request)
     {
+        $isOrderableOnline = filter_var($request->input('is_orderable_online'), FILTER_VALIDATE_BOOLEAN);
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
+            'price' => $isOrderableOnline ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'image' => 'nullable|image|max:20480',
             'additional_images' => 'nullable|array|max:10',
             'additional_images.*' => 'image|max:20480',
@@ -99,11 +101,13 @@ class AdminProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
+        $isOrderableOnline = filter_var($request->input('is_orderable_online'), FILTER_VALIDATE_BOOLEAN);
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
+            'price' => $isOrderableOnline ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'image' => 'nullable|image|max:20480',
             'additional_images' => 'nullable|array|max:10',
             'additional_images.*' => 'image|max:20480',
