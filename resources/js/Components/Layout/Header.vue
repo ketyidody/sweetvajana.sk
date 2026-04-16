@@ -22,9 +22,6 @@
           <Link :href="localizedUrl('/products')" :class="navLinkClass">
             {{ t('nav.products') }}
           </Link>
-          <Link :href="localizedUrl('/pages/prices')" :class="navLinkClass">
-            {{ t('nav.prices') }}
-          </Link>
           <Link :href="localizedUrl('/about')" :class="navLinkClass">
             {{ t('nav.about') }}
           </Link>
@@ -82,14 +79,6 @@
           @click="isMobileMenuOpen = false"
         >
           {{ t('nav.products') }}
-        </Link>
-        <Link
-          :href="localizedUrl('/pages/prices')"
-          class="block"
-          :class="navLinkClass"
-          @click="isMobileMenuOpen = false"
-        >
-          {{ t('nav.prices') }}
         </Link>
         <Link
           :href="localizedUrl('/about')"
