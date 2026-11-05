@@ -170,7 +170,7 @@
             <div class="space-y-3">
               <div
                 v-for="item in items"
-                :key="item.product_id"
+                :key="item.key"
                 class="flex gap-3"
               >
                 <img
@@ -180,6 +180,9 @@
                 />
                 <div class="flex-1 min-w-0">
                   <p class="text-sm truncate">{{ item.name }}</p>
+                  <p v-for="opt in item.options" :key="opt.group" class="text-xs text-muted-foreground">
+                    {{ opt.group }}: {{ opt.values.join(', ') }}
+                  </p>
                   <p class="text-xs text-muted-foreground">{{ t('order.qty') }} {{ item.quantity }}</p>
                 </div>
                 <p class="text-sm flex-shrink-0">€{{ item.subtotal }}</p>

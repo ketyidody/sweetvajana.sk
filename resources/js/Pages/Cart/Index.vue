@@ -13,7 +13,7 @@
         <div class="lg:col-span-2 space-y-4">
           <div
             v-for="item in items"
-            :key="item.product_id"
+            :key="item.key"
             class="flex gap-4 p-4 bg-card rounded-lg border border-border"
           >
             <Link :href="localizedUrl('/products/' + item.slug)" class="flex-shrink-0">
@@ -27,12 +27,15 @@
               <Link :href="localizedUrl('/products/' + item.slug)" class="font-medium hover:text-primary transition-colors">
                 {{ item.name }}
               </Link>
+              <p v-for="opt in item.options" :key="opt.group" class="text-sm text-muted-foreground">
+                {{ opt.group }}: {{ opt.values.join(', ') }}
+              </p>
               <p class="text-primary mt-1">€{{ item.price }}</p>
               <div class="flex items-center gap-3 mt-2">
                 <div class="flex items-center border border-border rounded-md">
                   <button
                     class="px-3 py-1 text-sm hover:bg-muted transition-colors"
-                    @click="updateQuantity(item.product_id, item.quantity - 1)"
+                    @click="updateQuantity(item.key, item.quantity - 1)"
                   >
                     <MinusIcon class="w-3 h-3" />
                   </button>
@@ -41,14 +44,14 @@
                   </span>
                   <button
                     class="px-3 py-1 text-sm hover:bg-muted transition-colors"
-                    @click="updateQuantity(item.product_id, item.quantity + 1)"
+                    @click="updateQuantity(item.key, item.quantity + 1)"
                   >
                     <PlusIcon class="w-3 h-3" />
                   </button>
                 </div>
                 <button
                   class="text-sm text-destructive hover:text-destructive/80 transition-colors"
-                  @click="removeItem(item.product_id)"
+                  @click="removeItem(item.key)"
                 >
                   <Trash2Icon class="w-4 h-4" />
                 </button>
@@ -125,15 +128,15 @@ defineProps({
 
 const cartItemsCount = computed(() => usePage().props.cartItemsCount)
 
-function updateQuantity(productId, quantity) {
+function updateQuantity(key, quantity) {
   if (quantity <= 0) {
-    removeItem(productId)
+    removeItem(key)
     return
   }
-  router.patch(localizedUrl(`/cart/${productId}`), { quantity }, { preserveScroll: true })
+  router.patch(localizedUrl(`/cart/${key}`), { quantity }, { preserveScroll: true })
 }
 
-function removeItem(productId) {
-  router.delete(localizedUrl(`/cart/${productId}`), { preserveScroll: true })
+function removeItem(key) {
+  router.delete(localizedUrl(`/cart/${key}`), { preserveScroll: true })
 }
 </script>

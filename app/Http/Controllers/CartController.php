@@ -3,43 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CartController extends Controller
 {
+    public function __construct(private CartService $cartService) {}
+
     public function index(Request $request)
     {
-        $cart = $request->session()->get('cart', []);
-        $items = [];
-        $subtotal = 0;
+        $lines = $this->cartService->lines($request->session()->get('cart', []));
+        $subtotal = $lines->sum('subtotal');
 
-        if (! empty($cart)) {
-            $products = Product::whereIn('id', array_keys($cart))
-                ->where('is_active', true)
-                ->withTranslations()
-                ->get()
-                ->keyBy('id');
-
-            foreach ($cart as $productId => $cartItem) {
-                if ($products->has($productId)) {
-                    $product = $products[$productId];
-                    $quantity = $cartItem['quantity'];
-                    $lineTotal = $product->price * $quantity;
-                    $subtotal += $lineTotal;
-
-                    $items[] = [
-                        'product_id' => $product->id,
-                        'name' => $product->translated('name'),
-                        'slug' => $product->slug,
-                        'price' => $product->price,
-                        'image' => $product->image,
-                        'quantity' => $quantity,
-                        'subtotal' => number_format($lineTotal, 2, '.', ''),
-                    ];
-                }
-            }
-        }
+        $items = $lines->map(fn ($line) => [
+            'key' => $line['key'],
+            'product_id' => $line['product']->id,
+            'name' => $line['product']->translated('name'),
+            'slug' => $line['product']->slug,
+            'price' => $line['product']->price,
+            'image' => $line['product']->image,
+            'quantity' => $line['quantity'],
+            'options' => $this->cartService->describeOptions($line['product'], $line['options']),
+            'subtotal' => number_format($line['subtotal'], 2, '.', ''),
+        ])->values();
 
         return Inertia::render('Cart/Index', [
             'items' => $items,
@@ -53,6 +40,8 @@ class CartController extends Controller
         $request->validate([
             'product_id' => 'required|integer|exists:products,id',
             'quantity' => 'integer|min:1',
+            'options' => 'nullable|array',
+            'options.*' => 'array',
         ]);
 
         $product = Product::where('id', $request->product_id)
@@ -60,20 +49,24 @@ class CartController extends Controller
             ->where('is_orderable_online', true)
             ->firstOrFail();
 
-        $cart = $request->session()->get('cart', []);
-        $currentQty = $cart[$product->id]['quantity'] ?? 0;
-        $newQty = $currentQty + ($request->quantity ?? 1);
+        $options = $this->cartService->validateOptions($product, $request->input('options', []));
+        $key = $this->cartService->lineKey($product->id, $options);
 
-        if ($newQty > 0) {
-            $cart[$product->id] = ['quantity' => $newQty];
-        }
+        $cart = $request->session()->get('cart', []);
+        $currentQty = $cart[$key]['quantity'] ?? 0;
+
+        $cart[$key] = [
+            'product_id' => $product->id,
+            'quantity' => $currentQty + ($request->quantity ?? 1),
+            'options' => $options,
+        ];
 
         $request->session()->put('cart', $cart);
 
         return back()->with('success', "{$product->name} added to cart.");
     }
 
-    public function update(Request $request, int $productId)
+    public function update(Request $request, string $key)
     {
         $request->validate([
             'quantity' => 'required|integer|min:0',
@@ -81,12 +74,14 @@ class CartController extends Controller
 
         $cart = $request->session()->get('cart', []);
 
+        if (! isset($cart[$key])) {
+            return back();
+        }
+
         if ($request->quantity <= 0) {
-            unset($cart[$productId]);
+            unset($cart[$key]);
         } else {
-            $cart[$productId] = [
-                'quantity' => $request->quantity,
-            ];
+            $cart[$key]['quantity'] = $request->quantity;
         }
 
         $request->session()->put('cart', $cart);
@@ -94,10 +89,10 @@ class CartController extends Controller
         return back();
     }
 
-    public function remove(Request $request, int $productId)
+    public function remove(Request $request, string $key)
     {
         $cart = $request->session()->get('cart', []);
-        unset($cart[$productId]);
+        unset($cart[$key]);
         $request->session()->put('cart', $cart);
 
         return back();

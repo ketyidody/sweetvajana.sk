@@ -50,7 +50,12 @@
       </tr>
       @foreach($order->items as $item)
       <tr>
-        <td style="padding: 8px 14px;">{{ $item->product_name }}</td>
+        <td style="padding: 8px 14px;">
+          {{ $item->product_name }}
+          @foreach($item->options ?? [] as $opt)
+            <br><span style="font-size: 12px; color: #666;">{{ $opt['group'] }}: {{ implode(', ', $opt['values']) }}</span>
+          @endforeach
+        </td>
         <td style="padding: 8px 14px; text-align: right;">{{ $item->quantity }}</td>
         <td style="padding: 8px 14px; text-align: right;">€{{ number_format($item->subtotal, 2, '.', '') }}</td>
       </tr>

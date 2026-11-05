@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
+use App\Models\Language;
 use App\Models\Order;
-use App\Models\Product;
+use App\Services\CartService;
 use App\Services\GoPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,32 +24,20 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index');
         }
 
-        $products = Product::whereIn('id', array_keys($cart))
-            ->where('is_active', true)
-            ->withTranslations()
-            ->get()
-            ->keyBy('id');
+        $cartService = app(CartService::class);
+        $lines = $cartService->lines($cart);
+        $subtotal = $lines->sum('subtotal');
 
-        $items = [];
-        $subtotal = 0;
-
-        foreach ($cart as $productId => $cartItem) {
-            if ($products->has($productId)) {
-                $product = $products[$productId];
-                $quantity = $cartItem['quantity'];
-                $lineTotal = $product->price * $quantity;
-                $subtotal += $lineTotal;
-
-                $items[] = [
-                    'product_id' => $product->id,
-                    'name' => $product->translated('name'),
-                    'price' => $product->price,
-                    'image' => $product->image,
-                    'quantity' => $quantity,
-                    'subtotal' => number_format($lineTotal, 2, '.', ''),
-                ];
-            }
-        }
+        $items = $lines->map(fn ($line) => [
+            'key' => $line['key'],
+            'product_id' => $line['product']->id,
+            'name' => $line['product']->translated('name'),
+            'price' => $line['product']->price,
+            'image' => $line['product']->image,
+            'quantity' => $line['quantity'],
+            'options' => $cartService->describeOptions($line['product'], $line['options']),
+            'subtotal' => number_format($line['subtotal'], 2, '.', ''),
+        ])->values()->all();
 
         if (empty($items)) {
             return redirect()->route('cart.index')->with('error', 'Your cart items are no longer available.');
@@ -78,33 +67,19 @@ class CheckoutController extends Controller
         }
 
         $order = DB::transaction(function () use ($request, $cart) {
-            $products = Product::whereIn('id', array_keys($cart))
-                ->where('is_active', true)
-                ->lockForUpdate()
-                ->get()
-                ->keyBy('id');
+            $cartService = app(CartService::class);
+            $lines = $cartService->lines($cart, lockForUpdate: true);
+            $defaultLocale = Language::getDefault()?->code ?? 'sk';
+            $subtotal = $lines->sum('subtotal');
 
-            $items = [];
-            $subtotal = 0;
-
-            foreach ($cart as $productId => $cartItem) {
-                if (! $products->has($productId)) {
-                    continue;
-                }
-
-                $product = $products[$productId];
-                $quantity = $cartItem['quantity'];
-                $lineTotal = $product->price * $quantity;
-                $subtotal += $lineTotal;
-
-                $items[] = [
-                    'product_id' => $product->id,
-                    'product_name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => $quantity,
-                    'subtotal' => $lineTotal,
-                ];
-            }
+            $items = $lines->map(fn ($line) => [
+                'product_id' => $line['product']->id,
+                'product_name' => $line['product']->name,
+                'options' => $cartService->describeOptions($line['product'], $line['options'], $defaultLocale) ?: null,
+                'price' => $line['product']->price,
+                'quantity' => $line['quantity'],
+                'subtotal' => $line['subtotal'],
+            ])->all();
 
             if (empty($items)) {
                 return null;
@@ -182,5 +157,4 @@ class CheckoutController extends Controller
 
         return redirect()->route('orders.confirmation', $order);
     }
-
 }

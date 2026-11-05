@@ -47,6 +47,14 @@ class Product extends Model
             ->withTimestamps();
     }
 
+    public function optionGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(OptionGroup::class, 'product_option_groups')
+            ->withPivot('min_selections', 'max_selections')
+            ->withTimestamps()
+            ->orderBy('product_option_groups.id');
+    }
+
     public static function translatableFields(): array
     {
         return ['name', 'description'];

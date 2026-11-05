@@ -37,6 +37,7 @@ class OrderConfirmationController extends Controller
                 'notes' => $order->notes,
                 'items' => $order->items->map(fn ($item) => [
                     'product_name' => $item->product_name,
+                    'options' => $item->options,
                     'price' => $item->price,
                     'quantity' => $item->quantity,
                     'subtotal' => $item->subtotal,
