@@ -39,12 +39,15 @@
           <h2 class="text-lg font-medium mb-4">{{ t('order.details') }}</h2>
           <div class="space-y-3">
             <div
-              v-for="item in order.items"
-              :key="item.product_name"
+              v-for="(item, i) in order.items"
+              :key="i"
               class="flex justify-between items-center text-sm"
             >
               <div>
                 <p>{{ item.product_name }}</p>
+                <p v-for="opt in item.options ?? []" :key="opt.group" class="text-muted-foreground">
+                  {{ opt.group }}: {{ opt.values.join(', ') }}
+                </p>
                 <p class="text-muted-foreground">{{ t('order.qty') }} {{ item.quantity }} × €{{ item.price }}</p>
               </div>
               <p>€{{ item.subtotal }}</p>

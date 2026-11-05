@@ -72,6 +72,37 @@
 
           <!-- Online orderable: add to cart -->
           <template v-if="product.is_orderable_online">
+            <!-- Option groups -->
+            <div v-for="group in product.option_groups" :key="group.id" class="mb-6">
+              <div class="flex items-baseline justify-between gap-3 mb-2">
+                <h3 class="text-sm font-medium">{{ group.name }}</h3>
+                <span class="text-xs text-muted-foreground">
+                  {{ selectionHint(group) }} · {{ selections[group.id].length }}/{{ group.max_selections }}
+                </span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="value in group.values"
+                  :key="value.id"
+                  type="button"
+                  class="px-3 py-1.5 text-sm border rounded-full transition-colors"
+                  :class="isSelected(group, value)
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : isBlocked(group, value)
+                      ? 'border-border text-muted-foreground opacity-50 cursor-not-allowed'
+                      : 'border-border hover:border-primary/50'"
+                  :disabled="isBlocked(group, value)"
+                  :aria-pressed="isSelected(group, value)"
+                  @click="toggleOption(group, value)"
+                >
+                  {{ value.name }}
+                </button>
+              </div>
+              <p v-if="optionErrors[`options.${group.id}`]" class="text-destructive text-xs mt-1">
+                {{ optionErrors[`options.${group.id}`] }}
+              </p>
+            </div>
+
             <div class="flex items-center gap-3">
               <div class="flex items-center border border-border rounded-md">
                 <button
@@ -97,7 +128,8 @@
                 </button>
               </div>
               <button
-                class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+                class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="!optionsComplete"
                 @click="addToCart"
               >
                 <ShoppingCartIcon class="w-4 h-4" />
@@ -246,7 +278,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
 import { ArrowLeft as ArrowLeftIcon, Minus as MinusIcon, Plus as PlusIcon, ShoppingCart as ShoppingCartIcon, ClipboardList as ClipboardListIcon, Clock as ClockIcon, X as XIcon } from 'lucide-vue-next'
 import Header from '@/Components/Layout/Header.vue'
@@ -284,8 +316,53 @@ function clampQuantity() {
   if (quantity.value < 1) quantity.value = 1
 }
 
+// Option selections: group id => selected value ids
+const selections = reactive(Object.fromEntries((props.product.option_groups ?? []).map(g => [g.id, []])))
+const optionErrors = computed(() => usePage().props.errors ?? {})
+
+function minFor(group) {
+  return Math.min(group.min_selections, group.values.length)
+}
+
+function selectionHint(group) {
+  const min = minFor(group)
+  if (min === group.max_selections) return tn('product.choose_exactly', group.max_selections)
+  if (min === 0) return tn('product.choose_up_to', group.max_selections)
+  return t('product.choose_range', { min, max: group.max_selections })
+}
+
+function isSelected(group, value) {
+  return selections[group.id].includes(value.id)
+}
+
+// Single-pick groups behave like radios, so they never block.
+function isBlocked(group, value) {
+  return group.max_selections > 1
+    && !isSelected(group, value)
+    && selections[group.id].length >= group.max_selections
+}
+
+function toggleOption(group, value) {
+  const picked = selections[group.id]
+  if (isSelected(group, value)) {
+    picked.splice(picked.indexOf(value.id), 1)
+  } else if (group.max_selections === 1) {
+    picked.splice(0, picked.length, value.id)
+  } else if (picked.length < group.max_selections) {
+    picked.push(value.id)
+  }
+}
+
+const optionsComplete = computed(() =>
+  (props.product.option_groups ?? []).every(g => selections[g.id].length >= minFor(g))
+)
+
 function addToCart() {
-  router.post(localizedUrl('/cart'), { product_id: props.product.id, quantity: quantity.value }, { preserveScroll: true })
+  router.post(localizedUrl('/cart'), {
+    product_id: props.product.id,
+    quantity: quantity.value,
+    options: selections,
+  }, { preserveScroll: true })
 }
 
 // Special order form

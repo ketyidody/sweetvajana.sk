@@ -23,7 +23,12 @@
                 </thead>
                 <tbody>
                   <tr v-for="item in order.items" :key="item.id" class="border-b border-border last:border-0">
-                    <td class="p-3">{{ item.product_name }}</td>
+                    <td class="p-3">
+                    {{ item.product_name }}
+                    <p v-for="opt in item.options ?? []" :key="opt.group" class="text-xs text-muted-foreground">
+                      {{ opt.group }}: {{ opt.values.join(', ') }}
+                    </p>
+                  </td>
                     <td class="p-3">€{{ item.price }}</td>
                     <td class="p-3">{{ item.quantity }}</td>
                     <td class="p-3 text-right">€{{ item.subtotal }}</td>

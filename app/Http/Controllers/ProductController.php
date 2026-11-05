@@ -38,7 +38,26 @@ class ProductController extends Controller
             'image_url' => $product->image ? url($product->image) : null,
             'corpuses' => [],
             'cream_flavors' => [],
+            'option_groups' => [],
         ];
+
+        if ($product->is_orderable_online) {
+            $product->load(['optionGroups.translations', 'optionGroups.values.translations']);
+
+            $productData['option_groups'] = $product->optionGroups
+                ->filter(fn ($g) => $g->values->isNotEmpty())
+                ->map(fn ($g) => [
+                    'id' => $g->id,
+                    'name' => $g->translated('name', $locale),
+                    'min_selections' => $g->pivot->min_selections,
+                    'max_selections' => $g->pivot->max_selections,
+                    'values' => $g->values->map(fn ($v) => [
+                        'id' => $v->id,
+                        'name' => $v->translated('name', $locale),
+                    ]),
+                ])
+                ->values();
+        }
 
         $pricesPageContent = null;
 

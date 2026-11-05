@@ -8,6 +8,8 @@ use App\Models\Corpus;
 use App\Models\CreamFlavor;
 use App\Models\Language;
 use App\Models\ModelTranslation;
+use App\Models\OptionGroup;
+use App\Models\OptionGroupValue;
 use App\Models\Size;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,6 +25,10 @@ class AdminProductOptionController extends Controller
             'creamFlavors' => CreamFlavor::with('translations')->get()->map(fn ($c) => $this->formatOption($c)),
             'additions' => Addition::with('translations')->get()->map(fn ($a) => array_merge($this->formatOption($a), ['price' => $a->price])),
             'sizes' => Size::with('translations')->get()->map(fn ($s) => $this->formatOption($s)),
+            'optionGroups' => OptionGroup::with(['translations', 'values.translations'])->get()->map(fn ($g) => array_merge(
+                $this->formatOption($g),
+                ['values' => $g->values->map(fn ($v) => $this->formatOption($v))],
+            )),
         ]);
     }
 
@@ -184,6 +190,85 @@ class AdminProductOptionController extends Controller
         $size->delete();
 
         return back()->with('success', 'Size deleted.');
+    }
+
+    // --- Option Group ---
+
+    public function storeOptionGroup(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'translations' => 'nullable|array',
+            'translations.*.name' => 'nullable|string|max:255',
+        ]);
+
+        $group = OptionGroup::create(['name' => $validated['name']]);
+        $this->saveTranslations($group, OptionGroup::class, $validated['translations'] ?? [], OptionGroup::translatableFields());
+
+        return back()->with('success', 'Option group added.');
+    }
+
+    public function updateOptionGroup(Request $request, OptionGroup $optionGroup)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'translations' => 'nullable|array',
+            'translations.*.name' => 'nullable|string|max:255',
+        ]);
+
+        $optionGroup->update(['name' => $validated['name']]);
+        $this->saveTranslations($optionGroup, OptionGroup::class, $validated['translations'] ?? [], OptionGroup::translatableFields());
+
+        return back()->with('success', 'Option group updated.');
+    }
+
+    public function destroyOptionGroup(OptionGroup $optionGroup)
+    {
+        foreach ($optionGroup->values as $value) {
+            $value->translations()->delete();
+        }
+        $optionGroup->translations()->delete();
+        $optionGroup->delete();
+
+        return back()->with('success', 'Option group deleted.');
+    }
+
+    // --- Option Group Value ---
+
+    public function storeOptionGroupValue(Request $request, OptionGroup $optionGroup)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'translations' => 'nullable|array',
+            'translations.*.name' => 'nullable|string|max:255',
+        ]);
+
+        $value = $optionGroup->values()->create(['name' => $validated['name']]);
+        $this->saveTranslations($value, OptionGroupValue::class, $validated['translations'] ?? [], OptionGroupValue::translatableFields());
+
+        return back()->with('success', 'Option added.');
+    }
+
+    public function updateOptionGroupValue(Request $request, OptionGroupValue $optionGroupValue)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'translations' => 'nullable|array',
+            'translations.*.name' => 'nullable|string|max:255',
+        ]);
+
+        $optionGroupValue->update(['name' => $validated['name']]);
+        $this->saveTranslations($optionGroupValue, OptionGroupValue::class, $validated['translations'] ?? [], OptionGroupValue::translatableFields());
+
+        return back()->with('success', 'Option updated.');
+    }
+
+    public function destroyOptionGroupValue(OptionGroupValue $optionGroupValue)
+    {
+        $optionGroupValue->translations()->delete();
+        $optionGroupValue->delete();
+
+        return back()->with('success', 'Option deleted.');
     }
 
     // --- Helpers ---

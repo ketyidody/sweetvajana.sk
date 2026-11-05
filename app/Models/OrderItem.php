@@ -11,12 +11,14 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'product_name',
+        'options',
         'price',
         'quantity',
         'subtotal',
     ];
 
     protected $casts = [
+        'options' => 'array',
         'price' => 'decimal:2',
         'subtotal' => 'decimal:2',
     ];

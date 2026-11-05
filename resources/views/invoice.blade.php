@@ -160,7 +160,12 @@
     <tbody>
       @foreach($items as $item)
       <tr>
-        <td>{{ $item['product_name'] }}</td>
+        <td>
+          {{ $item['product_name'] }}
+          @foreach($item['options'] ?? [] as $opt)
+            <br><small>{{ $opt['group'] }}: {{ implode(', ', $opt['values']) }}</small>
+          @endforeach
+        </td>
         <td class="right">€{{ number_format($item['price'], 2, '.', '') }}</td>
         <td class="right">{{ $item['quantity'] }}</td>
         <td class="right">€{{ number_format($item['subtotal'], 2, '.', '') }}</td>

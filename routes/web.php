@@ -10,8 +10,8 @@ use App\Http\Controllers\Admin\AdminLanguageController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
-use App\Http\Controllers\Admin\AdminProductOptionController;
 use App\Http\Controllers\Admin\AdminProductImportExportController;
+use App\Http\Controllers\Admin\AdminProductOptionController;
 use App\Http\Controllers\Admin\AdminProductSizeController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSpecialOrderController;
@@ -44,8 +44,8 @@ $publicRoutes = function () {
     // Cart routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
-    Route::patch('/cart/{productId}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/{productId}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::patch('/cart/{key}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{key}', [CartController::class, 'remove'])->name('cart.remove');
 
     // Checkout routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
@@ -96,7 +96,7 @@ Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name(
     Route::post('products/import', [AdminProductImportExportController::class, 'import'])->name('products.import');
     Route::resource('products', AdminProductController::class)->except('show');
 
-    // Global product options (corpus, cream flavor, additions)
+    // Global product options (corpus, cream flavor, additions, option groups)
     Route::get('product-options', [AdminProductOptionController::class, 'index'])->name('product-options.index');
     Route::post('product-options/corpuses', [AdminProductOptionController::class, 'storeCorpus'])->name('product-options.corpuses.store');
     Route::put('product-options/corpuses/{corpus}', [AdminProductOptionController::class, 'updateCorpus'])->name('product-options.corpuses.update');
@@ -110,6 +110,13 @@ Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name(
     Route::post('product-options/sizes', [AdminProductOptionController::class, 'storeSize'])->name('product-options.sizes.store');
     Route::put('product-options/sizes/{size}', [AdminProductOptionController::class, 'updateSize'])->name('product-options.sizes.update');
     Route::delete('product-options/sizes/{size}', [AdminProductOptionController::class, 'destroySize'])->name('product-options.sizes.destroy');
+
+    Route::post('product-options/groups', [AdminProductOptionController::class, 'storeOptionGroup'])->name('product-options.groups.store');
+    Route::put('product-options/groups/{optionGroup}', [AdminProductOptionController::class, 'updateOptionGroup'])->name('product-options.groups.update');
+    Route::delete('product-options/groups/{optionGroup}', [AdminProductOptionController::class, 'destroyOptionGroup'])->name('product-options.groups.destroy');
+    Route::post('product-options/groups/{optionGroup}/values', [AdminProductOptionController::class, 'storeOptionGroupValue'])->name('product-options.group-values.store');
+    Route::put('product-options/group-values/{optionGroupValue}', [AdminProductOptionController::class, 'updateOptionGroupValue'])->name('product-options.group-values.update');
+    Route::delete('product-options/group-values/{optionGroupValue}', [AdminProductOptionController::class, 'destroyOptionGroupValue'])->name('product-options.group-values.destroy');
 
     // Per-product size assignment
     Route::post('products/{product}/sizes', [AdminProductSizeController::class, 'store'])->name('products.sizes.store');

@@ -132,6 +132,53 @@
               <label for="is_available_for_collection" class="text-sm">Available for immediate collection</label>
             </div>
           </div>
+
+          <!-- Option groups -->
+          <div v-if="form.is_orderable_online" class="border-t border-border pt-4">
+            <label class="block text-sm font-medium mb-1">Customer options</label>
+            <p class="text-xs text-muted-foreground mb-3">
+              Let the customer pick from an option group (e.g. flavours). Groups are managed under
+              <Link href="/admin/product-options" class="underline hover:text-foreground">Product Options</Link>.
+            </p>
+
+            <div v-if="form.option_groups.length" class="border border-border rounded-md divide-y divide-border mb-3">
+              <div v-for="(group, i) in form.option_groups" :key="group.id" class="flex flex-wrap items-end gap-3 px-3 py-2">
+                <div class="flex-1 min-w-32 text-sm pb-1.5">
+                  {{ groupName(group.id) }}
+                  <span class="text-xs text-muted-foreground">({{ groupValueCount(group.id) }} options)</span>
+                </div>
+                <div class="w-20">
+                  <label class="block text-xs text-muted-foreground mb-1">Min picks</label>
+                  <input v-model.number="group.min_selections" type="number" min="0" max="50" class="w-full px-2 py-1.5 border border-border rounded-md bg-input-background text-sm" />
+                </div>
+                <div class="w-20">
+                  <label class="block text-xs text-muted-foreground mb-1">Max picks</label>
+                  <input v-model.number="group.max_selections" type="number" min="1" max="50" class="w-full px-2 py-1.5 border border-border rounded-md bg-input-background text-sm" />
+                </div>
+                <button
+                  type="button"
+                  @click="form.option_groups.splice(i, 1)"
+                  class="mb-0.5 text-xs px-2 py-1.5 border border-destructive/50 text-destructive rounded hover:bg-destructive/10 transition-colors"
+                >
+                  Remove
+                </button>
+                <p v-if="form.errors[`option_groups.${i}.max_selections`] || form.errors[`option_groups.${i}.min_selections`]" class="basis-full text-destructive text-xs">
+                  {{ form.errors[`option_groups.${i}.max_selections`] || form.errors[`option_groups.${i}.min_selections`] }}
+                </p>
+              </div>
+            </div>
+
+            <select
+              v-if="unassignedGroups.length"
+              :value="''"
+              @change="addOptionGroup($event)"
+              class="w-full px-3 py-2 border border-border rounded-md bg-input-background text-sm"
+            >
+              <option value="">+ Add option group…</option>
+              <option v-for="g in unassignedGroups" :key="g.id" :value="g.id">{{ g.name }}</option>
+            </select>
+            <p v-else-if="!optionGroups.length" class="text-xs text-muted-foreground">No option groups defined yet.</p>
+          </div>
         </template>
 
         <!-- Translation locale fields -->
@@ -197,6 +244,8 @@ const props = defineProps({
   productTranslations: { type: Object, default: () => ({}) },
   languages: { type: Array, default: () => [] },
   defaultLocale: { type: String, default: 'sk' },
+  optionGroups: { type: Array, default: () => [] },
+  productOptionGroups: { type: Array, default: () => [] },
 })
 
 const activeLocale = ref(props.defaultLocale)
@@ -243,7 +292,26 @@ const form = useForm({
   is_available_for_collection: props.product?.is_available_for_collection ?? false,
   soonest_availability: props.product?.soonest_availability ?? null,
   translations: translationsData,
+  option_groups: props.productOptionGroups.map(g => ({ ...g })),
 })
+
+const unassignedGroups = computed(() =>
+  props.optionGroups.filter(g => !form.option_groups.some(a => a.id === g.id))
+)
+
+function groupName(id) {
+  return props.optionGroups.find(g => g.id === id)?.name ?? ''
+}
+
+function groupValueCount(id) {
+  return props.optionGroups.find(g => g.id === id)?.values_count ?? 0
+}
+
+function addOptionGroup(event) {
+  const id = Number(event.target.value)
+  if (id) form.option_groups.push({ id, min_selections: 1, max_selections: 1 })
+  event.target.value = ''
+}
 
 function truncate(text, length = 50) {
   if (!text) return ''

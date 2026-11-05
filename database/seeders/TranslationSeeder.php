@@ -42,6 +42,9 @@ class TranslationSeeder extends Seeder
                 'personalize' => ['sk' => 'Personalizovat', 'en' => 'Personalize'],
                 'available_for_collection' => ['sk' => 'Ihned k odberu', 'en' => 'Available for Collection'],
                 'soonest_availability' => ['sk' => 'Najskorsi termin: :count den|Najskorsi termin: :count dni|Najskorsi termin: :count dni', 'en' => 'Ready in :count day|Ready in :count days'],
+                'choose_exactly' => ['sk' => 'Vyberte :count moznost|Vyberte :count moznosti|Vyberte :count moznosti', 'en' => 'Choose :count option|Choose :count options'],
+                'choose_up_to' => ['sk' => 'Vyberte najviac :count moznost|Vyberte najviac :count moznosti|Vyberte najviac :count moznosti', 'en' => 'Choose up to :count option|Choose up to :count options'],
+                'choose_range' => ['sk' => 'Vyberte :min az :max moznosti', 'en' => 'Choose :min to :max options'],
             ],
             'cart' => [
                 'title' => ['sk' => 'Nakupny kosik', 'en' => 'Shopping Cart'],
