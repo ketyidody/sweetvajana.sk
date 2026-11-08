@@ -44,7 +44,7 @@
                     <td class="p-3 text-right">€{{ order.tax }}</td>
                   </tr>
                   <tr>
-                    <td colspan="3" class="p-3 text-right text-muted-foreground">Shipping</td>
+                    <td colspan="3" class="p-3 text-right text-muted-foreground">{{ order.delivery_method_name ?? 'Shipping' }}</td>
                     <td class="p-3 text-right">€{{ order.shipping }}</td>
                   </tr>
                   <tr class="font-medium">
@@ -65,8 +65,9 @@
             </span>
           </div>
           <div class="bg-card rounded-lg border border-border p-4">
-            <h2 class="font-medium mb-3">Shipping Address</h2>
-            <p class="text-sm whitespace-pre-line text-muted-foreground">{{ order.shipping_address }}</p>
+            <h2 class="font-medium mb-3">Delivery</h2>
+            <p v-if="order.delivery_method_name" class="text-sm">{{ order.delivery_method_name }}</p>
+            <p v-if="order.shipping_address" class="text-sm whitespace-pre-line text-muted-foreground mt-1">{{ order.shipping_address }}</p>
           </div>
         </div>
       </div>

@@ -30,9 +30,15 @@
         <td style="padding: 10px 14px;">{{ $order->customer_phone }}</td>
       </tr>
       <tr>
+        <td style="padding: 10px 14px; font-weight: bold;">Spôsob doručenia</td>
+        <td style="padding: 10px 14px;">{{ $order->delivery_method_name ?? '—' }}</td>
+      </tr>
+      @if($order->shipping_address)
+      <tr>
         <td style="padding: 10px 14px; font-weight: bold;">Dodacia adresa</td>
         <td style="padding: 10px 14px;">{{ $order->shipping_address }}</td>
       </tr>
+      @endif
       @if($order->notes)
       <tr style="background: #f5f5f5;">
         <td style="padding: 10px 14px; font-weight: bold;">Poznámky</td>

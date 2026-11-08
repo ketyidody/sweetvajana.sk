@@ -34,6 +34,14 @@ class GoPayService
             'count' => $item->quantity,
         ])->toArray();
 
+        if ($order->shipping > 0) {
+            $items[] = [
+                'name' => $order->delivery_method_name,
+                'amount' => (int) round($order->shipping * 100),
+                'count' => 1,
+            ];
+        }
+
         $locale = app()->getLocale();
         $language = match ($locale) {
             'sk' => Language::SLOVAK,

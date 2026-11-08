@@ -59,17 +59,6 @@
                   </div>
                 </div>
                 <div>
-                  <label for="shipping_address" class="block text-sm font-medium mb-1">{{ t('checkout.shipping_address') }}</label>
-                  <textarea
-                    id="shipping_address"
-                    v-model="form.shipping_address"
-                    rows="3"
-                    required
-                    class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-                  ></textarea>
-                  <p v-if="form.errors.shipping_address" class="text-destructive text-sm mt-1">{{ form.errors.shipping_address }}</p>
-                </div>
-                <div>
                   <label for="notes" class="block text-sm font-medium mb-1">{{ t('checkout.order_notes') }} <span class="text-muted-foreground">({{ t('checkout.optional') }})</span></label>
                   <textarea
                     id="notes"
@@ -78,6 +67,43 @@
                     class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                   ></textarea>
                 </div>
+              </div>
+            </div>
+
+            <!-- Delivery Method -->
+            <div class="bg-card rounded-lg border border-border p-6">
+              <h2 class="text-lg font-medium mb-4">{{ t('checkout.delivery_method') }}</h2>
+              <p v-if="!deliveryMethods.length" class="text-sm text-muted-foreground">{{ t('checkout.no_delivery_methods') }}</p>
+              <div class="space-y-2">
+                <label
+                  v-for="method in deliveryMethods"
+                  :key="method.key"
+                  class="flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-colors"
+                  :class="form.delivery_method === method.key ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'"
+                >
+                  <input v-model="form.delivery_method" type="radio" name="delivery_method" :value="method.key" class="mt-0.5" />
+                  <div class="flex-1">
+                    <div class="flex justify-between gap-2">
+                      <span class="text-sm font-medium">{{ method.name }}</span>
+                      <span class="text-sm">{{ Number(method.price) > 0 ? `€${method.price}` : t('cart.free') }}</span>
+                    </div>
+                    <p v-if="method.description" class="text-xs text-muted-foreground mt-1">{{ method.description }}</p>
+                    <p v-if="method.details" class="text-xs text-muted-foreground mt-1 whitespace-pre-line">{{ method.details }}</p>
+                  </div>
+                </label>
+              </div>
+              <p v-if="form.errors.delivery_method" class="text-destructive text-sm mt-1">{{ form.errors.delivery_method }}</p>
+
+              <div v-if="selectedDelivery?.requires_address" class="mt-4">
+                <label for="shipping_address" class="block text-sm font-medium mb-1">{{ t('checkout.shipping_address') }}</label>
+                <textarea
+                  id="shipping_address"
+                  v-model="form.shipping_address"
+                  rows="3"
+                  required
+                  class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+                ></textarea>
+                <p v-if="form.errors.shipping_address" class="text-destructive text-sm mt-1">{{ form.errors.shipping_address }}</p>
               </div>
             </div>
 
@@ -125,12 +151,12 @@
 
               <!-- Billing address -->
               <div class="mt-4">
-                <label class="flex items-center gap-2 cursor-pointer mb-3">
+                <label v-if="selectedDelivery?.requires_address" class="flex items-center gap-2 cursor-pointer mb-3">
                   <input v-model="billingSameAsShipping" type="checkbox" class="rounded" />
                   <span class="text-sm">{{ t('checkout.billing_same_as_shipping') }}</span>
                 </label>
-                <div v-if="!billingSameAsShipping">
-                  <label class="block text-sm font-medium mb-1">{{ t('checkout.billing_address') }}</label>
+                <div v-if="!selectedDelivery?.requires_address || !billingSameAsShipping">
+                  <label class="block text-sm font-medium mb-1">{{ t('checkout.billing_address') }} <span v-if="!selectedDelivery?.requires_address" class="text-muted-foreground">({{ t('checkout.optional') }})</span></label>
                   <textarea
                     v-model="form.billing_address"
                     rows="3"
@@ -194,8 +220,8 @@
                 <span>€{{ subtotal }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-muted-foreground">{{ t('cart.shipping') }}</span>
-                <span>{{ t('cart.free') }}</span>
+                <span class="text-muted-foreground">{{ selectedDelivery?.name ?? t('cart.shipping') }}</span>
+                <span>{{ shippingCost > 0 ? `€${shippingCost.toFixed(2)}` : t('cart.free') }}</span>
               </div>
               <div class="border-t border-border pt-2 mt-2 flex justify-between font-medium text-base">
                 <span>{{ t('cart.total') }}</span>
@@ -228,7 +254,7 @@ const { execute: executeRecaptcha } = useRecaptcha()
 const props = defineProps({
   items: Array,
   subtotal: String,
-  total: String,
+  deliveryMethods: Array,
   customer: Object,
 })
 
@@ -241,6 +267,7 @@ const form = useForm({
   customer_name: props.customer?.name ?? '',
   customer_email: props.customer?.email ?? '',
   customer_phone: props.customer?.phone ?? '',
+  delivery_method: props.deliveryMethods[0]?.key ?? '',
   shipping_address: props.customer?.address ?? '',
   notes: '',
   billing_address: '',
@@ -251,8 +278,18 @@ const form = useForm({
   recaptcha_token: '',
 })
 
+const selectedDelivery = computed(() => props.deliveryMethods.find((m) => m.key === form.delivery_method))
+const shippingCost = computed(() => Number(selectedDelivery.value?.price ?? 0))
+const total = computed(() => (Number(props.subtotal) + shippingCost.value).toFixed(2))
+
 async function submitOrder() {
   form.recaptcha_token = await executeRecaptcha('checkout')
-  form.post(localizedUrl('/checkout'))
+  form
+    .transform((data) => ({
+      ...data,
+      shipping_address: selectedDelivery.value?.requires_address ? data.shipping_address : '',
+      billing_address: selectedDelivery.value?.requires_address && billingSameAsShipping.value ? '' : data.billing_address,
+    }))
+    .post(localizedUrl('/checkout'))
 }
 </script>

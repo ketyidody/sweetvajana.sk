@@ -21,7 +21,7 @@ class AccountOrderController extends Controller
         }
 
         return Inertia::render('Account/Orders/Show', [
-            'order' => $order->load('items'),
+            'order' => $order->load('items')->append('delivery_method_name'),
         ]);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Delivery\DeliveryManager;
 use App\Rules\Recaptcha;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CheckoutRequest extends FormRequest
 {
@@ -14,11 +16,19 @@ class CheckoutRequest extends FormRequest
 
     public function rules(): array
     {
+        $delivery = app(DeliveryManager::class);
+
         return [
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:50',
-            'shipping_address' => 'required|string|max:1000',
+            'delivery_method' => ['required', 'string', Rule::in($delivery->available()->map(fn ($driver) => $driver::key())->all())],
+            'shipping_address' => [
+                Rule::requiredIf(fn () => $delivery->findAvailable($this->input('delivery_method'))?->requiresAddress() ?? false),
+                'nullable',
+                'string',
+                'max:1000',
+            ],
             'notes' => 'nullable|string|max:2000',
             'billing_address' => 'nullable|string|max:1000',
             'company_name' => 'nullable|string|max:255',

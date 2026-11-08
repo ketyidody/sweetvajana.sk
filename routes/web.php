@@ -6,6 +6,7 @@ use App\Http\Controllers\AccountOrderController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminDeliveryMethodController;
 use App\Http\Controllers\Admin\AdminLanguageController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPageController;
@@ -126,6 +127,12 @@ Route::middleware(['auth', 'admin', 'set-admin-locale'])->prefix('admin')->name(
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('orders/{order}', [AdminOrderController::class, 'update'])->name('orders.update');
+
+    Route::get('delivery-methods', [AdminDeliveryMethodController::class, 'index'])->name('delivery-methods.index');
+    Route::post('delivery-methods/reorder', [AdminDeliveryMethodController::class, 'reorder'])->name('delivery-methods.reorder');
+    Route::get('delivery-methods/{deliveryMethod}/edit', [AdminDeliveryMethodController::class, 'edit'])->name('delivery-methods.edit');
+    Route::put('delivery-methods/{deliveryMethod}', [AdminDeliveryMethodController::class, 'update'])->name('delivery-methods.update');
+    Route::patch('delivery-methods/{deliveryMethod}/toggle', [AdminDeliveryMethodController::class, 'toggle'])->name('delivery-methods.toggle');
 
     Route::resource('pages', AdminPageController::class)->except('show');
 
