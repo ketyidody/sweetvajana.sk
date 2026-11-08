@@ -88,6 +88,19 @@ class ProductOptionGroupsTest extends TestCase
         ])->assertSessionHasErrors('option_groups.0.max_selections');
     }
 
+    public function test_product_lists_flag_products_with_options(): void
+    {
+        $this->product->update(['is_featured' => true]);
+        $this->assignFlavours(1, 4);
+
+        $this->get('/products?category=pralines')->assertInertia(fn ($page) => $page->where('products.data.0.has_options', true));
+        $this->get('/')->assertInertia(fn ($page) => $page->where('featuredProducts.0.has_options', true));
+
+        $this->product->optionGroups()->detach();
+
+        $this->get('/products?category=pralines')->assertInertia(fn ($page) => $page->where('products.data.0.has_options', false));
+    }
+
     public function test_adding_to_cart_requires_option_selection(): void
     {
         $this->assignFlavours(1, 4);

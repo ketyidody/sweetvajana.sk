@@ -28,6 +28,15 @@
         </span>
         <template v-if="product.is_orderable_online">
           <button
+            v-if="product.has_options"
+            class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-medium hover:bg-primary/90 transition-colors"
+            @click.stop="router.visit(localizedUrl('/products/' + product.slug))"
+          >
+            <ListChecksIcon class="w-3.5 h-3.5" />
+            {{ t('product.choose_options') }}
+          </button>
+          <button
+            v-else
             class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-medium hover:bg-primary/90 transition-colors"
             @click.stop="addToCart"
           >
@@ -50,7 +59,7 @@
 
 <script setup>
 import { router } from '@inertiajs/vue3'
-import { ShoppingCart as ShoppingCartIcon, PenLine as PenLineIcon } from 'lucide-vue-next'
+import { ShoppingCart as ShoppingCartIcon, PenLine as PenLineIcon, ListChecks as ListChecksIcon } from 'lucide-vue-next'
 import { useTranslation } from '@/composables/useTranslation'
 import { useLocale } from '@/composables/useLocale'
 

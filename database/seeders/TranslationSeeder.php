@@ -40,6 +40,7 @@ class TranslationSeeder extends Seeder
                 'back_to_products' => ['sk' => 'Spat na produkty', 'en' => 'Back to Products'],
                 'products' => ['sk' => 'Produkty', 'en' => 'Products'],
                 'personalize' => ['sk' => 'Personalizovat', 'en' => 'Personalize'],
+                'choose_options' => ['sk' => 'Vybrať možnosti', 'en' => 'Choose Options'],
                 'available_for_collection' => ['sk' => 'Ihned k odberu', 'en' => 'Available for Collection'],
                 'soonest_availability' => ['sk' => 'Najskorsi termin: :count den|Najskorsi termin: :count dni|Najskorsi termin: :count dni', 'en' => 'Ready in :count day|Ready in :count days'],
                 'choose_exactly' => ['sk' => 'Vyberte :count moznost|Vyberte :count moznosti|Vyberte :count moznosti', 'en' => 'Choose :count option|Choose :count options'],

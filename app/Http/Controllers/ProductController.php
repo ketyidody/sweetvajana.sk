@@ -103,6 +103,7 @@ class ProductController extends Controller
 
         $query = Product::with(['category.translations'])
             ->withTranslations()
+            ->withExists('optionGroups as has_options')
             ->where('is_active', true);
 
         if ($request->category === 'available-for-collection') {
@@ -128,6 +129,7 @@ class ProductController extends Controller
                 'category' => $product->category->translated('name'),
                 'is_orderable_online' => $product->is_orderable_online,
                 'is_available_for_collection' => $product->is_available_for_collection,
+                'has_options' => $product->has_options,
             ]);
 
         $tree = Category::getTree();
