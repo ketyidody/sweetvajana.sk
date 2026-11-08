@@ -175,7 +175,7 @@ class ProductOptionGroupsTest extends TestCase
             'customer_name' => 'Jana',
             'customer_email' => 'jana@example.com',
             'customer_phone' => '0900000000',
-            'shipping_address' => 'Hlavna 1',
+            'delivery_method' => 'store_pickup',
             'payment_method' => 'gopay',
             'recaptcha_token' => 'x',
         ])->assertSessionHasNoErrors()->assertRedirect();

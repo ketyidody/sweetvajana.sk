@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Delivery\DeliveryDriver;
+use App\Delivery\DeliveryManager;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Language;
 use App\Models\Order;
@@ -48,7 +50,8 @@ class CheckoutController extends Controller
         return Inertia::render('Checkout/Index', [
             'items' => $items,
             'subtotal' => number_format($subtotal, 2, '.', ''),
-            'total' => number_format($subtotal, 2, '.', ''),
+            'deliveryMethods' => app(DeliveryManager::class)->available()
+                ->map(fn (DeliveryDriver $driver) => $driver->toArray($subtotal)),
             'customer' => $user ? [
                 'name' => $user->name,
                 'email' => $user->email,
@@ -71,6 +74,9 @@ class CheckoutController extends Controller
             $lines = $cartService->lines($cart, lockForUpdate: true);
             $defaultLocale = Language::getDefault()?->code ?? 'sk';
             $subtotal = $lines->sum('subtotal');
+            $delivery = app(DeliveryManager::class)->findAvailable($request->delivery_method);
+            $shippingCost = $delivery->price($subtotal);
+            $shippingAddress = $delivery->requiresAddress() ? $request->shipping_address : null;
 
             $items = $lines->map(fn ($line) => [
                 'product_id' => $line['product']->id,
@@ -93,15 +99,16 @@ class CheckoutController extends Controller
                 'customer_name' => $request->customer_name,
                 'customer_email' => $request->customer_email,
                 'customer_phone' => $request->customer_phone,
-                'shipping_address' => $request->shipping_address,
-                'billing_address' => $request->billing_address ?: $request->shipping_address,
+                'delivery_method' => $delivery->key(),
+                'shipping_address' => $shippingAddress,
+                'billing_address' => $request->billing_address ?: $shippingAddress,
                 'company_name' => $request->company_name,
                 'company_id' => $request->company_id,
                 'vat_number' => $request->vat_number,
                 'subtotal' => $subtotal,
                 'tax' => 0,
-                'shipping' => 0,
-                'total' => $subtotal,
+                'shipping' => $shippingCost,
+                'total' => $subtotal + $shippingCost,
                 'status' => 'pending',
                 'payment_method' => $request->payment_method,
                 'payment_status' => 'pending',

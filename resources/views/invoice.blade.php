@@ -124,7 +124,9 @@
         @if($order->vat_number)
           DIČ/IČ DPH: {{ $order->vat_number }}<br>
         @endif
-        {{ $order->billing_address }}<br>
+        @if($order->billing_address)
+          {{ $order->billing_address }}<br>
+        @endif
         {{ $order->customer_email }}<br>
         {{ $order->customer_phone }}
       </div>
@@ -183,7 +185,7 @@
       </tr>
       @if($order->shipping > 0)
       <tr>
-        <td style="color: #666;">Doprava:</td>
+        <td style="color: #666;">{{ $order->delivery_method_name ?? 'Doprava' }}:</td>
         <td>€{{ number_format($order->shipping, 2, '.', '') }}</td>
       </tr>
       @endif

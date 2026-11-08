@@ -26,7 +26,7 @@ class AdminOrderController extends Controller
     public function show(Order $order)
     {
         return Inertia::render('Admin/Orders/Show', [
-            'order' => $order->load(['items', 'user']),
+            'order' => $order->load(['items', 'user'])->append('delivery_method_name'),
         ]);
     }
 

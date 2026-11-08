@@ -59,11 +59,11 @@
               <span>€{{ order.subtotal }}</span>
             </div>
             <div v-if="Number(order.shipping) > 0" class="flex justify-between">
-              <span class="text-muted-foreground">{{ t('cart.shipping') }}</span>
+              <span class="text-muted-foreground">{{ order.delivery_method_name ?? t('cart.shipping') }}</span>
               <span>€{{ order.shipping }}</span>
             </div>
             <div v-else class="flex justify-between">
-              <span class="text-muted-foreground">{{ t('cart.shipping') }}</span>
+              <span class="text-muted-foreground">{{ order.delivery_method_name ?? t('cart.shipping') }}</span>
               <span>{{ t('cart.free') }}</span>
             </div>
             <div class="border-t border-border pt-2 mt-2 flex justify-between font-medium text-base">
@@ -80,7 +80,9 @@
             <p><span class="text-muted-foreground">{{ t('order.name') }}</span> {{ order.customer_name }}</p>
             <p><span class="text-muted-foreground">{{ t('order.email') }}</span> {{ order.customer_email }}</p>
             <p><span class="text-muted-foreground">{{ t('order.phone') }}</span> {{ order.customer_phone }}</p>
-            <p><span class="text-muted-foreground">{{ t('order.address') }}</span> {{ order.shipping_address }}</p>
+            <p v-if="order.delivery_method_name"><span class="text-muted-foreground">{{ t('order.delivery_method') }}</span> {{ order.delivery_method_name }}</p>
+            <p v-if="order.shipping_address"><span class="text-muted-foreground">{{ t('order.address') }}</span> {{ order.shipping_address }}</p>
+            <p v-else-if="order.delivery_details"><span class="text-muted-foreground">{{ t('order.pickup_location') }}</span> <span class="whitespace-pre-line">{{ order.delivery_details }}</span></p>
             <p v-if="order.notes"><span class="text-muted-foreground">{{ t('order.notes') }}</span> {{ order.notes }}</p>
             <p>
               <span class="text-muted-foreground">{{ t('order.payment_method') }}</span>

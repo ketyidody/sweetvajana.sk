@@ -80,6 +80,8 @@ class TranslationSeeder extends Seeder
                 'vat_number' => ['sk' => 'DIC / IC DPH', 'en' => 'VAT Number (DIC)'],
                 'billing_address' => ['sk' => 'Fakturacna adresa', 'en' => 'Billing Address'],
                 'billing_same_as_shipping' => ['sk' => 'Rovnaka ako dodacia adresa', 'en' => 'Same as shipping address'],
+                'delivery_method' => ['sk' => 'Spôsob doručenia', 'en' => 'Delivery Method'],
+                'no_delivery_methods' => ['sk' => 'Momentálne nie je dostupný žiadny spôsob doručenia. Kontaktujte nás prosím.', 'en' => 'No delivery method is currently available. Please contact us.'],
                 'billing_different' => ['sk' => 'Ina fakturacna adresa', 'en' => 'Different billing address'],
             ],
             'contact' => [
@@ -119,6 +121,8 @@ class TranslationSeeder extends Seeder
                 'confirmed' => ['sk' => 'Objednavka potvrdena!', 'en' => 'Order Confirmed!'],
                 'thank_you' => ['sk' => 'Dakujeme za vasu objednavku. Vase cislo objednavky je', 'en' => 'Thank you for your order. Your order number is'],
                 'details' => ['sk' => 'Detaily objednavky', 'en' => 'Order Details'],
+                'delivery_method' => ['sk' => 'Spôsob doručenia:', 'en' => 'Delivery method:'],
+                'pickup_location' => ['sk' => 'Miesto odberu:', 'en' => 'Pickup location:'],
                 'delivery_info' => ['sk' => 'Informacie o doruceni', 'en' => 'Delivery Information'],
                 'name' => ['sk' => 'Meno:', 'en' => 'Name:'],
                 'email' => ['sk' => 'E-mail:', 'en' => 'Email:'],

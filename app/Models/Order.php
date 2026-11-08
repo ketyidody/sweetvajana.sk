@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Delivery\DeliveryDriver;
+use App\Delivery\DeliveryManager;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +17,7 @@ class Order extends Model
         'customer_name',
         'customer_email',
         'customer_phone',
+        'delivery_method',
         'shipping_address',
         'billing_address',
         'subtotal',
@@ -38,6 +42,16 @@ class Order extends Model
         'shipping' => 'decimal:2',
         'total' => 'decimal:2',
     ];
+
+    public function deliveryMethod(): ?DeliveryDriver
+    {
+        return app(DeliveryManager::class)->find($this->delivery_method);
+    }
+
+    protected function deliveryMethodName(): Attribute
+    {
+        return Attribute::get(fn () => $this->deliveryMethod()?->name() ?? $this->delivery_method);
+    }
 
     public function user(): BelongsTo
     {
